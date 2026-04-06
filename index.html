@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhiQu-R | By. PhiQu</title>
+    <link rel="icon" type="image/png" href="./foto/1.2.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .typing-container {
+            display: inline-block;
+            border-right: 3px solid #3b82f6;
+            animation: blink 0.75s step-end infinite;
+        }
+
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #3b82f6 } }
+        
+        .loader-dots div { animation-timing-function: cubic-bezier(0, 1, 1, 0); }
+        .loader-dots div:nth-child(1) { left: 8px; animation: loader1 0.6s infinite; }
+        .loader-dots div:nth-child(2) { left: 8px; animation: loader2 0.6s infinite; }
+        .loader-dots div:nth-child(3) { left: 32px; animation: loader2 0.6s infinite; }
+        .loader-dots div:nth-child(4) { left: 56px; animation: loader3 0.6s infinite; }
+        @keyframes loader1 { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        @keyframes loader3 { 0% { transform: scale(1); } 100% { transform: scale(0); } }
+        @keyframes loader2 { 0% { transform: translate(0, 0); } 100% { transform: translate(24px, 0); } }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen overflow-hidden">
+
+    <div id="splash1" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center transition-all duration-1000">
+        <div class="animate__animated animate__zoomIn">
+            <img src="./foto/1.2.png" class="w-32 h-32 md:w-48 md:h-48 drop-shadow-2xl" alt="Logo PhiQu-R">
+        </div>
+        <div class="mt-8 flex space-x-2 loader-dots relative w-20 h-4">
+            <div class="absolute w-3 h-3 rounded-full bg-blue-600"></div>
+            <div class="absolute w-3 h-3 rounded-full bg-blue-600"></div>
+            <div class="absolute w-3 h-3 rounded-full bg-blue-600"></div>
+            <div class="absolute w-3 h-3 rounded-full bg-blue-600"></div>
+        </div>
+    </div>
+
+    <div id="splash2" class="fixed inset-0 z-[90] bg-slate-900 hidden flex flex-col items-center justify-center p-8 text-center">
+        <div class="max-w-3xl animate__animated animate__fadeIn">
+            <i class="fa-solid fa-quote-left text-blue-500 text-4xl mb-6"></i>
+            <h2 id="typing-text" class="text-white text-xl md:text-3xl font-light italic leading-relaxed tracking-wide min-h-[100px]"></h2>
+            <p class="text-blue-400 mt-8 font-semibold tracking-widest animate__animated animate__fadeIn animate__delay-5s">QS. ALI 'IMRAN: 191</p>
+        </div>
+    </div>
+
+    <div id="tab-splash" class="fixed inset-0 z-[80] bg-blue-600/90 backdrop-blur-sm hidden items-center justify-center">
+        <div class="text-center">
+            <i class="fa-solid fa-sync fa-spin text-white text-5xl mb-4"></i>
+            <p class="text-white font-bold tracking-widest uppercase">Menyiapkan Form...</p>
+        </div>
+    </div>
+
+    <main id="main-content" class="hidden min-h-screen flex items-center justify-center p-4 md:p-8">
+        <div class="glass w-full max-w-[450px] rounded-[2rem] shadow-2xl overflow-hidden animate__animated animate__fadeInUp">
+            
+            <div class="bg-blue-600 p-8 text-center text-white relative">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10" style="background-image: url('./foto/1.2.png');"></div>
+                <a href="dashboardQu.html" class="relative z-10 inline-block hover:scale-105 transition-all duration-300">
+                    <img src="./foto/1.2.png" class="w-16 h-16 mx-auto mb-3 drop-shadow-lg" alt="PhiQu-R">
+                </a>
+                <h1 class="text-2xl font-bold tracking-tighter">PhiQu-R</h1>
+                <p class="text-blue-100 text-xs uppercase tracking-[0.2em]">Media Interaktif Fisika</p>
+            </div>
+
+            <div class="p-8">
+                <div class="flex p-1.5 bg-slate-100 rounded-2xl mb-8">
+                    <button onclick="changeTab('login')" id="btn-tab-login" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all duration-300 bg-white shadow-sm text-blue-600">LOGIN</button>
+                    <button onclick="changeTab('register')" id="btn-tab-register" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all duration-300 text-slate-400">DAFTAR</button>
+                </div>
+
+                <form id="login-form" class="space-y-5 animate__animated animate__fadeIn">
+                    <div class="relative group">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input type="text" id="l-user" placeholder="Username" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                    </div>
+                    <div class="relative group">
+                        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input type="password" id="l-pass" placeholder="Password" required class="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        <button type="button" onclick="togglePass('l-pass', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95">MASUK SEKARANG</button>
+                </form>
+
+                <form id="register-form" class="hidden space-y-5 animate__animated animate__fadeIn">
+                    <div class="relative group">
+                        <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input type="text" id="r-nama" placeholder="Nama Lengkap" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    </div>
+                    <div class="relative group">
+                        <i class="fa-solid fa-circle-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input type="text" id="r-user" placeholder="Username" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    </div>
+                    <div class="relative group">
+                        <i class="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input type="password" id="r-pass" placeholder="Password" required class="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        <button type="button" onclick="togglePass('r-pass', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95">BUAT AKUN</button>
+                </form>
+
+                <p class="text-center mt-8 text-xs text-slate-400 font-medium">© 2024 PhiQu | PhiQu-R 2026</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="fixed z-[100] transition-all duration-500 
+            /* Mobile: Baris bawah horizontal */
+            bottom-6 left-1/2 -translate-x-1/2 flex flex-row space-x-4
+            /* Laptop: Sudut kanan atas vertikal */
+            md:top-6 md:right-6 md:left-auto md:translate-x-0 md:flex-col md:space-x-0 md:space-y-4">
+    
+    <button onclick="toggleModal('help-modal')" class="bg-white/90 backdrop-blur shadow-xl w-14 h-14 rounded-2xl text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 group relative">
+        <i class="fa-solid fa-circle-question text-xl"></i>
+        <span class="absolute right-16 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded hidden md:group-hover:block whitespace-nowrap uppercase tracking-widest">Bantuan</span>
+    </button>
+
+    <a href="https://wa.me/6283182514910" target="_blank" class="bg-white/90 backdrop-blur shadow-xl w-14 h-14 rounded-2xl text-green-500 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all duration-300 group relative">
+        <i class="fa-brands fa-whatsapp text-2xl"></i>
+        <span class="absolute right-16 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded hidden md:group-hover:block whitespace-nowrap uppercase tracking-widest">Hubungi Admin</span>
+    </a>
+</div>
+
+<div id="help-modal" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl animate__animated animate__zoomIn">
+        <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
+            <h3 class="font-bold tracking-widest uppercase text-sm"><i class="fa-solid fa-lightbulb mr-2"></i> Panduan PhiQu-R</h3>
+            <button onclick="toggleModal('help-modal')" class="hover:rotate-90 transition-transform"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div class="p-8 space-y-4 text-slate-600 text-sm leading-relaxed overflow-y-auto max-h-[70vh]">
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">1</div>
+                <p><b>Daftar Akun:</b> Jika belum punya akun, klik tab <b>DAFTAR</b> dan isi data diri Anda dengan lengkap.</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">2</div>
+                <p><b>Login:</b> Masuk menggunakan username dan password yang sudah didaftarkan.</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">3</div>
+                <p><b>Pre-test:</b> Setelah login pertama kali, Anda diwajibkan menyelesaikan Pre-test untuk mengukur pemahaman awal.</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">4</div>
+                <p><b>Dashboard:</b> Pelajari materi interaktif fisika dan coding melalui menu yang tersedia.</p>
+            </div>
+            <div class="p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-700 italic">
+                Jika mengalami kendala teknis, klik ikon WhatsApp untuk terhubung langsung dengan Customer Service kami.
+            </div>
+        </div>
+        <div class="p-6 bg-slate-50 text-center border-t">
+            <button onclick="toggleModal('help-modal')" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-xs hover:bg-blue-700 transition-all">SAYA MENGERTI</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwv799_EYwLRsr_C3FClkR_RMUoaA5oE_cGQMhuEo80C-1OSklxve4Am2KN2Iv4viYB/exec"; // GANTI DENGAN URL DEPLOY TERBARU
+    const artiAyat = "Ya Tuhan kami, tidaklah Engkau menciptakan semua ini sia-sia; Mahasuci Engkau, lindungilah kami dari azab neraka.";
+
+    // Splash Screen Logic (Tetap sama)
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('splash1').classList.add('animate__animated', 'animate__fadeOut');
+            setTimeout(() => {
+                document.getElementById('splash1').style.display = 'none';
+                document.getElementById('splash2').classList.remove('hidden');
+                startTyping();
+            }, 800);
+        }, 2500);
+    };
+
+    function startTyping() {
+        let i = 0;
+        const textEl = document.getElementById('typing-text');
+        function type() {
+            if (i < artiAyat.length) {
+                textEl.innerHTML += artiAyat.charAt(i); i++;
+                setTimeout(type, 50);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('splash2').classList.add('animate__animated', 'animate__fadeOut');
+                    setTimeout(() => {
+                        document.getElementById('splash2').style.display = 'none';
+                        document.getElementById('main-content').classList.remove('hidden');
+                        document.body.classList.remove('overflow-hidden');
+                    }, 800);
+                }, 3000);
+            }
+        }
+        type();
+    }
+
+    // Tab & Toggle UI
+    function togglePass(id, btn) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+        btn.querySelector('i').classList.toggle('fa-eye-slash');
+    }
+
+    function changeTab(type) {
+        const splash = document.getElementById('tab-splash');
+        splash.style.display = 'flex';
+        setTimeout(() => {
+            const isLogin = type === 'login';
+            document.getElementById('login-form').classList.toggle('hidden', !isLogin);
+            document.getElementById('register-form').classList.toggle('hidden', isLogin);
+            document.getElementById('btn-tab-login').className = isLogin ? "flex-1 py-3 rounded-xl font-bold text-sm bg-white shadow-sm text-blue-600" : "flex-1 py-3 rounded-xl font-bold text-sm text-slate-400";
+            document.getElementById('btn-tab-register').className = !isLogin ? "flex-1 py-3 rounded-xl font-bold text-sm bg-white shadow-sm text-blue-600" : "flex-1 py-3 rounded-xl font-bold text-sm text-slate-400";
+            splash.style.display = 'none';
+        }, 600);
+    }
+
+    // --- FUNGSI KIRIM DATA (FETCH) ---
+
+    // 1. DAFTAR AKUN
+    document.getElementById('register-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true; btn.innerText = "Memproses...";
+
+        const payload = {
+            action: "register",
+            nama: document.getElementById('r-nama').value,
+            username: document.getElementById('r-user').value,
+            password: document.getElementById('r-pass').value
+        };
+
+        try {
+            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const res = await response.json();
+            if (res.result === "success") {
+                Swal.fire('Berhasil!', res.message, 'success').then(() => changeTab('login'));
+                e.target.reset();
+            } else { Swal.fire('Error', res.message, 'error'); }
+        } catch (err) { Swal.fire('Error', 'Koneksi Gagal', 'error'); }
+        btn.disabled = false; btn.innerText = "BUAT AKUN";
+    };
+
+    // 2. LOGIN AKUN
+    document.getElementById('login-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true; btn.innerText = "Mengecek...";
+
+        const payload = {
+            action: "login",
+            username: document.getElementById('l-user').value,
+            password: document.getElementById('l-pass').value
+        };
+
+        try {
+            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const res = await response.json();
+            if (res.result === "success") {
+                localStorage.setItem('userPhiQu', JSON.stringify(res)); // Simpan Sesi
+                Swal.fire('Selamat Datang!', res.message, 'success').then(() => {
+                    window.location.href = res.needsProfile ? "profil.html" : "profil.html";
+                });
+            } else { Swal.fire('Error', res.message, 'error'); }
+        } catch (err) { Swal.fire('Error', 'Koneksi Gagal', 'error'); }
+        btn.disabled = false; btn.innerText = "MASUK SEKARANG";
+    };
+
+    function toggleModal(id) {
+    const modal = document.getElementById(id);
+    if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+// Menutup modal jika user klik di luar area modal
+window.onclick = function(event) {
+    const helpModal = document.getElementById('help-modal');
+    if (event.target == helpModal) {
+        toggleModal('help-modal');
+    }
+}
+</script>
+</body>
+</html>

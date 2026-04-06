@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Test PhiQu-R | Final Challenge</title>
+    <link rel="icon" type="image/png" href="./foto/1.2.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; overflow-x: hidden; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .option-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
+        .option-card:hover { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; transform: translateX(10px); }
+        .option-card.correct { background: #059669 !important; border-color: #10b981 !important; animation: pulse 0.5s; }
+        .option-card.wrong { background: #dc2626 !important; border-color: #ef4444 !important; }
+        .CodeMirror { height: 220px; border-radius: 1rem; font-size: 14px; border: 1px solid rgba(255,255,255,0.1); }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <div class="w-full max-w-6xl mt-4 mb-8">
+        <div class="flex justify-between items-end mb-4">
+            <div>
+                <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest animate-pulse">Final Assessment</span>
+                <h1 class="text-3xl font-black mt-2">Post-Test <span class="text-blue-500">PhiQu-R</span></h1>
+                <p id="problem-title" class="text-blue-400 text-sm font-bold mt-1 uppercase tracking-tighter italic">Memuat Masalah...</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Progress</p>
+                <span id="q-count" class="text-3xl font-black text-blue-500">1/20</span>
+            </div>
+        </div>
+        <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-white/5">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-700" style="width: 5%"></div>
+        </div>
+    </div>
+
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-5 space-y-6">
+            <div class="glass rounded-[2.5rem] overflow-hidden p-3 group">
+                <img id="q-image" src="" class="w-full h-72 object-cover rounded-[2rem] transition duration-500 group-hover:scale-105" alt="Visual Fisika">
+            </div>
+
+            <div class="glass rounded-[2.5rem] p-7 relative">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-xs flex items-center gap-2 text-blue-300 tracking-widest uppercase">
+                        <i class="fas fa-terminal animate-pulse"></i> CT Simulation Lab
+                    </h3>
+                    <button onclick="runCode()" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-4 py-2 rounded-xl font-black transition-all hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] active:scale-95 uppercase">
+                        Run Logic <i class="fas fa-play ml-1"></i>
+                    </button>
+                </div>
+                <textarea id="code-editor"></textarea>
+                <div id="console-output" class="mt-4 p-4 bg-black/60 rounded-xl text-[13px] font-mono text-cyan-400 border border-white/5 min-h-[50px] shadow-inner">
+                    > Siap menjalankan simulasi...
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-7">
+            <div class="glass rounded-[2.5rem] p-8 md:p-12 h-full flex flex-col shadow-2xl">
+                <div id="pilar-badge" class="self-start px-5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-black uppercase mb-6 tracking-widest">
+                    Dekomposisi
+                </div>
+                <h2 id="q-text" class="text-xl md:text-2xl font-bold leading-relaxed mb-10 text-slate-100">
+                    Memuat pertanyaan...
+                </h2>
+
+                <div id="options" class="grid gap-4 mt-auto">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwv799_EYwLRsr_C3FClkR_RMUoaA5oE_cGQMhuEo80C-1OSklxve4Am2KN2Iv4viYB/exec"; 
+        let currentIdx = 0;
+        let editor;
+        let report = { dekomposisi: 0, pola: 0, abstraksi: 0, algoritma: 0, total_score: 0 };
+
+        const questions = [
+            // ==========================================
+            // MASALAH 1: KONSER MUSIK (SOAL 1-4)
+            // ==========================================
+            {
+                masalah: "Masalah 1: Akustik Gedung Konser",
+                pilar: "Dekomposisi",
+                text: "Sebuah gedung konser mengalami masalah gema. Untuk memperbaikinya, bagian mana yang harus dianalisis secara terpisah (dekomposisi)?",
+                image: "https://images.unsplash.com/photo-1514525253361-b83f859b73c0?w=800",
+                options: ["Warna cat kursi", "Luas jendela, bahan dinding, dan tinggi plafon", "Harga alat musik", "Jumlah penonton", "Nama penyanyi"],
+                correct: 1,
+                // GANTI KODE DI SINI (Muncul di Soal 1-4)
+                code: "function cekAkustik(v, a) {\n  let rt60 = 0.161 * (v / a);\n  return `Waktu Dengung: ${rt60.toFixed(2)} detik`;\n}\nconsole.log(cekAkustik(1000, 45));"
+            },
+            {
+                masalah: "Masalah 1: Akustik Gedung Konser",
+                pilar: "Abstraksi",
+                text: "Jika fokus utama kita adalah mengurangi pantulan suara, informasi mana yang paling tidak relevan?",
+                image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
+                options: ["Jenis bahan peredam", "Koefisien serap bunyi", "Ketebalan busa", "Warna karpet di lantai", "Luas permukaan dinding"],
+                correct: 3
+            },
+            {
+                masalah: "Masalah 1: Akustik Gedung Konser",
+                pilar: "Pola",
+                text: "Semakin banyak bahan berpori yang dipasang, waktu dengung (RT60) semakin kecil. Pola hubungan ini adalah...",
+                image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800",
+                options: ["Berbanding lurus", "Berbanding terbalik", "Tidak berhubungan", "Konstan", "Eksponensial naik"],
+                correct: 1
+            },
+            {
+                masalah: "Masalah 1: Akustik Gedung Konser",
+                pilar: "Algoritma",
+                text: "Langkah sistematis memasang peredam: 1. Ukur RT60, 2. Hitung luas dinding, 3. Pilih bahan, 4. Pasang. Jika RT60 masih tinggi, langkah yang diulang adalah...",
+                image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800",
+                options: ["Langkah 1", "Langkah 2", "Langkah 3 & 4", "Selesai saja", "Tidak ada"],
+                correct: 2
+            },
+
+            // ==========================================
+            // MASALAH 2: RADAR KAPAL SELAM (SOAL 5-8)
+            // ==========================================
+            {
+                masalah: "Masalah 2: Radar & Sonar",
+                pilar: "Dekomposisi",
+                text: "Untuk menghitung jarak kapal ke dasar laut, data apa saja yang wajib diketahui?",
+                image: "https://images.unsplash.com/photo-1511210137255-6b5894103681?w=800",
+                options: ["Suhu air dan warna laut", "Waktu pantul dan cepat rambat bunyi di air", "Berat kapal dan jumlah kru", "Kedalaman laut saja", "Kecepatan angin"],
+                correct: 1,
+                // GANTI KODE DI SINI (Muncul di Soal 5-8)
+                code: "const vAir = 1500;\nfunction hitungJarak(t) {\n  return (vAir * t) / 2;\n}\nconsole.log(`Jarak Objek: ${hitungJarak(2.4)} meter`);"
+            },
+            {
+                masalah: "Masalah 2: Radar & Sonar",
+                pilar: "Pola",
+                text: "Sinyal sonar memantul lebih cepat saat mengenai benda padat dibandingkan lumpur. Ini merupakan pengenalan pola berdasarkan...",
+                image: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800",
+                options: ["Warna benda", "Kekuatan intensitas pantulan", "Bau air", "Kecepatan arus", "Jumlah ikan"],
+                correct: 1
+            },
+            {
+                masalah: "Masalah 2: Radar & Sonar",
+                pilar: "Abstraksi",
+                text: "Saat menggunakan sonar untuk navigasi, keberadaan gelembung kecil udara sering diabaikan. Ini disebut proses...",
+                image: "https://images.unsplash.com/photo-1484627147104-f5197bcd6651?w=800",
+                options: ["Dekomposisi", "Abstraksi", "Algoritma", "Debugging", "Simulasi"],
+                correct: 1
+            },
+            {
+                masalah: "Masalah 2: Radar & Sonar",
+                pilar: "Algoritma",
+                text: "Urutan kerja sonar: Pancarkan sinyal -> Tunggu pantulan -> Hitung waktu -> Tentukan jarak. Jika 'Tunggu pantulan' gagal, maka...",
+                image: "https://images.unsplash.com/photo-1624314138470-5a2f24623f10?w=800",
+                options: ["Jarak otomatis nol", "Sinyal harus dipancarkan ulang", "Kapal langsung berhenti", "Hitung waktu secara manual", "Ganti baterai"],
+                correct: 1
+            },
+
+            // ==========================================
+            // MASALAH 3: DAWAI & RESONANSI (SOAL 9-12)
+            // ==========================================
+            {
+                masalah: "Masalah 3: Dawai & Alat Musik",
+                pilar: "Pola",
+                text: "Senar gitar yang lebih tipis menghasilkan nada lebih tinggi. Jika senar dipertebal, maka...",
+                image: "https://images.unsplash.com/photo-1525201548942-d908756d4088?w=800",
+                options: ["Nada makin tinggi", "Nada makin rendah", "Nada tetap", "Senar putus", "Suara hilang"],
+                correct: 1,
+                // GANTI KODE DI SINI (Muncul di Soal 9-12)
+                code: "function frekuensiDawai(F, L, m) {\n  let v = Math.sqrt(F / (m/L));\n  return v / (2 * L);\n}\nconsole.log(`Frekuensi: ${frekuensiDawai(100, 0.6, 0.01).toFixed(2)} Hz`);"
+            },
+            {
+                masalah: "Masalah 3: Dawai & Alat Musik",
+                pilar: "Dekomposisi",
+                text: "Bunyi gitar akustik berasal dari getaran dawai dan resonansi udara. Memisahkan dua hal ini untuk dipelajari adalah...",
+                image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=800",
+                options: ["Abstraksi", "Pola", "Dekomposisi", "Algoritma", "Evaluasi"],
+                correct: 2
+            },
+            {
+                masalah: "Masalah 3: Dawai & Alat Musik",
+                pilar: "Algoritma",
+                text: "Langkah menyetem gitar: 1. Petik senar, 2. Bandingkan nada, 3. Putar dryer, 4. Ulangi. Ini disebut algoritma...",
+                image: "https://images.unsplash.com/photo-1516924912317-739343360b13?w=800",
+                options: ["Searching", "Sorting", "Looping (perulangan)", "Filtering", "Deleting"],
+                correct: 2
+            },
+            {
+                masalah: "Masalah 3: Dawai & Alat Musik",
+                pilar: "Abstraksi",
+                text: "Saat menghitung frekuensi nada, kita sering mengabaikan suhu ruangan. Ini adalah bentuk...",
+                image: "https://images.unsplash.com/photo-1510915363390-1534c3e1e374?w=800",
+                options: ["Pola", "Algoritma", "Abstraksi", "Dekomposisi", "Sintesis"],
+                correct: 2
+            },
+
+            // ==========================================
+            // MASALAH 4: EFEK DOPPLER (SOAL 13-16)
+            // ==========================================
+            {
+                masalah: "Masalah 4: Ambulans & Doppler",
+                pilar: "Pola",
+                text: "Saat ambulans mendekati Anda, bunyi sirine terasa makin tinggi. Apa pola yang terjadi pada frekuensi yang didengar?",
+                image: "https://images.unsplash.com/photo-1587574293340-e0011c4e8ecf?w=800",
+                options: ["Fp < Fs", "Fp > Fs", "Fp = Fs", "Fp = 0", "Fp negatif"],
+                correct: 1,
+                // GANTI KODE DI SINI (Muncul di Soal 13-16)
+                code: "const v = 340, fs = 1000, vs = 20;\nlet fp = fs * (v / (v - vs)); // Mendekat\nconsole.log(`Frekuensi Terdengar: ${fp.toFixed(0)} Hz`);"
+            },
+            {
+                masalah: "Masalah 4: Ambulans & Doppler",
+                pilar: "Dekomposisi",
+                text: "Untuk memecahkan rumus Doppler, variabel apa saja yang harus dipisahkan?",
+                image: "https://images.unsplash.com/photo-1512630221856-6c841e7ed87f?w=800",
+                options: ["Waktu dan Tanggal", "V (cepat rambat), Vs (sumber), dan Vp (pendengar)", "Warna mobil dan sirine", "Jenis bensin ambulans", "Nama supir"],
+                correct: 1
+            },
+            {
+                masalah: "Masalah 4: Ambulans & Doppler",
+                pilar: "Abstraksi",
+                text: "Dalam simulasi Doppler di kelas, bunyi pantulan dari gedung sekitar sering dianggap tidak ada. Hal ini bertujuan untuk...",
+                image: "https://images.unsplash.com/photo-1562619371-b67725b6fde2?w=800",
+                options: ["Menyulitkan soal", "Menyederhanakan masalah (Abstraksi)", "Membuat pola baru", "Mengikuti algoritma", "Mencari kesalahan"],
+                correct: 1
+            },
+            {
+                masalah: "Masalah 4: Ambulans & Doppler",
+                pilar: "Algoritma",
+                text: "Jika ambulans bergerak menjauh, maka tanda pada Vs dalam rumus menjadi (+) positif. Aturan pemilihan tanda ini adalah bagian dari...",
+                image: "https://images.unsplash.com/photo-1505751172676-59a358eeadff?w=800",
+                options: ["Abstraksi", "Dekomposisi", "Algoritma (Logical Steps)", "Pola visual", "Debugging"],
+                correct: 2
+            },
+
+            // ==========================================
+            // MASALAH 5: GELOMBANG LAUT (SOAL 17-20)
+            // ==========================================
+            {
+                masalah: "Masalah 5: Energi Laut",
+                pilar: "Dekomposisi",
+                text: "Gelombang air laut membawa energi kinetik dan potensial. Membagi total energi menjadi dua bagian ini disebut...",
+                image: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800",
+                options: ["Perkalian", "Dekomposisi", "Abstraksi", "Pola", "Input"],
+                correct: 1,
+                // GANTI KODE DI SINI (Muncul di Soal 17-20)
+                code: "let A = 2, rho = 1025, g = 9.8;\nlet energi = 0.5 * rho * g * (A**2);\nconsole.log(`Energi per meter: ${energi.toFixed(0)} Joule`);"
+            },
+            {
+                masalah: "Masalah 5: Energi Laut",
+                pilar: "Pola",
+                text: "Semakin besar amplitudo gelombang, semakin besar energi yang dibawa. Pola ini bersifat...",
+                image: "https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800",
+                options: ["Linear", "Kuadratik (Pangkat dua)", "Tetap", "Menurun", "Acak"],
+                correct: 1
+            },
+            {
+                masalah: "Masalah 5: Energi Laut",
+                pilar: "Abstraksi",
+                text: "Saat menghitung energi gelombang murni, kita mengabaikan keberadaan kapal yang lewat. Proses ini adalah...",
+                image: "https://images.unsplash.com/photo-1516061803700-1c19d20c5861?w=800",
+                options: ["Dekomposisi", "Pola", "Abstraksi", "Algoritma", "Coding"],
+                correct: 2
+            },
+            {
+                masalah: "Masalah 5: Energi Laut",
+                pilar: "Algoritma",
+                text: "Langkah mitigasi tsunami: 1. Deteksi gempa, 2. Analisis air laut, 3. Beri peringatan, 4. Evakuasi. Ini adalah...",
+                image: "https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?w=800",
+                options: ["Pola", "Abstraksi", "Algoritma", "Dekomposisi", "Data"],
+                correct: 2
+            }
+        ];
+
+        window.onload = () => {
+            editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+                mode: "javascript",
+                theme: "dracula",
+                lineNumbers: true,
+                autoCloseBrackets: true
+            });
+            
+            let attempts = parseInt(localStorage.getItem('phiQu_post_attempts')) || 0;
+            attempts++;
+            localStorage.setItem('phiQu_post_attempts', attempts);
+
+            loadQuestion();
+        };
+
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            
+            // UI Updates
+            document.getElementById('q-text').innerText = q.text;
+            document.getElementById('q-image').src = q.image;
+            document.getElementById('pilar-badge').innerText = q.pilar;
+            document.getElementById('problem-title').innerText = q.masalah;
+            document.getElementById('q-count').innerText = `${currentIdx + 1}/${questions.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIdx+1)/questions.length)*100}%`;
+
+            // Logic Ganti Editor setiap 4 soal (awal masalah baru)
+            if (currentIdx % 4 === 0) {
+                editor.setValue(q.code);
+            }
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('div');
+                btn.className = "option-card glass p-5 rounded-2xl flex items-center gap-4 animate__animated animate__fadeInRight";
+                btn.style.animationDelay = `${i * 0.1}s`;
+                btn.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30">${String.fromCharCode(65+i)}</div>
+                    <span class="text-sm font-semibold tracking-tight">${opt}</span>
+                `;
+                btn.onclick = () => checkAnswer(i);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function runCode() {
+            const outputDiv = document.getElementById('console-output');
+            outputDiv.innerHTML = "> Running...";
+            try {
+                const code = editor.getValue();
+                const originalLog = console.log;
+                console.log = (msg) => { outputDiv.innerHTML = `> Result: ${msg}`; };
+                eval(code);
+                console.log = originalLog;
+            } catch (err) {
+                outputDiv.innerHTML = `<span class="text-red-400">> Error: ${err.message}</span>`;
+            }
+        }
+
+        function checkAnswer(choice) {
+            const q = questions[currentIdx];
+            const allCards = document.querySelectorAll('.option-card');
+            allCards.forEach(c => c.style.pointerEvents = 'none');
+
+            if(choice === q.correct) {
+                allCards[choice].classList.add('correct');
+                report[q.pilar.toLowerCase()]++;
+                report.total_score += 5;
+            } else {
+                allCards[choice].classList.add('wrong');
+                allCards[q.correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                if(currentIdx < questions.length - 1) {
+                    currentIdx++;
+                    loadQuestion();
+                } else {
+                    submitPostTest();
+                }
+            }, 1200);
+        }
+
+        async function submitPostTest() {
+            Swal.fire({ title: 'Menyimpan Hasil...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            const user = JSON.parse(localStorage.getItem('userPhiQu'));
+            const payload = {
+                action: 'submit_posttest',
+                username: user ? user.username : 'Guest',
+                nilai_fisika: report.total_score,
+                dekomposisi: Math.round((report.dekomposisi/5)*100),
+                pola: Math.round((report.pola/5)*100),
+                abstraksi: Math.round((report.abstraksi/5)*100),
+                algoritma: Math.round((report.algoritma/5)*100),
+                percobaan: localStorage.getItem('phiQu_post_attempts')
+            };
+
+            try {
+                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Hasil evaluasi telah disimpan.' })
+                .then(() => window.location.href = "profil.html");
+            } catch (e) {
+                window.location.href = "profil.html";
+            }
+        }
+    </script>
+</body>
+</html>

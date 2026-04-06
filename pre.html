@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Test PhiQu-R | Gelombang & Bunyi</title>
+    <link rel="icon" type="image/png" href="./foto/1.2.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f4f8; overflow-x: hidden; }
+        
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        
+        /* State Tombol Jawaban */
+        .option-card { transition: all 0.3s ease; cursor: pointer; border: 2px solid #e2e8f0; }
+        .option-card.correct { border-color: #10b981 !important; background-color: #ecfdf5 !important; transform: scale(1.02); }
+        .option-card.wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .option-card.disabled { pointer-events: none; }
+        
+        .progress-bar { transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        
+        .pilar-badge {
+            padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl mb-6 animate__animated animate__fadeInDown">
+        <div class="flex justify-between items-end mb-3">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Pre-Test <span class="text-blue-600">PhiQu-R</span></h1>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" id="q-masalah">Memuat Masalah...</p>
+            </div>
+            <div class="text-right">
+                <span id="q-count" class="text-sm font-black text-blue-600">0/20</span>
+            </div>
+        </div>
+        <div class="w-full h-3 bg-white rounded-full overflow-hidden shadow-sm border border-slate-100">
+            <div id="progress" class="progress-bar h-full bg-gradient-to-r from-blue-500 to-indigo-600" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <main id="quiz-app" class="w-full max-w-4xl relative">
+        <div id="question-card" class="glass rounded-[3rem] p-6 md:p-12 shadow-2xl animate__animated animate__fadeIn">
+            
+            <div class="flex flex-col lg:flex-row gap-10">
+                <div class="w-full lg:w-2/5">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition"></div>
+                        <div class="relative rounded-[1.8rem] overflow-hidden bg-white border-4 border-white shadow-lg">
+                            <img id="q-image" src="" alt="Ilustrasi" class="w-full h-64 object-cover">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <div id="pilar-tag" class="pilar-badge bg-blue-600 text-white shadow-md shadow-blue-200">Dekomposisi</div>
+                        <div class="pilar-badge bg-slate-800 text-white">Gelombang & Bunyi</div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-3/5">
+                    <h2 id="q-text" class="text-xl md:text-2xl font-extrabold text-slate-800 mb-8 leading-snug">
+                        Sedang menyiapkan soal...
+                    </h2>
+                    
+                    <div id="options" class="grid grid-cols-1 gap-3">
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Ganti dengan URL Deployment Apps Script Anda
+        const API_URL = "https://script.google.com/macros/s/AKfycbwv799_EYwLRsr_C3FClkR_RMUoaA5oE_cGQMhuEo80C-1OSklxve4Am2KN2Iv4viYB/exec";
+        let currentIdx = 0;
+        let localUser = JSON.parse(localStorage.getItem('userPhiQu'));
+        
+        let report = { dekomposisi: 0, pola: 0, abstraksi: 0, algoritma: 0, total_score: 0 };
+
+        // Bank Soal - Pastikan setiap soal punya 'correct' index (0=A, 1=B, 2=C, 3=D, 4=E)
+        const questions = [
+            {
+                pilar: "Dekomposisi",
+                masalah: "Masalah 1: Riak di Kolam (Gelombang)",
+                image: "./foto/1.jpg",
+                text: "Ketika sebuah batu dijatuhkan ke kolam, terbentuk riak yang merambat. Komponen manakah yang paling tepat untuk mendefinisikan gelombang ini secara fisis?",
+                options: [
+                    "Perpindahan partikel air dari pusat ke pinggir kolam",
+                    "Getaran yang merambat tanpa memindahkan medium airnya",
+                    "Hanya perubahan warna permukaan air saja",
+                    "Energi yang hilang saat batu menyentuh dasar",
+                    "Gerak lurus beraturan dari seluruh massa air"
+                ],
+                correct: 1
+            },
+
+            {
+                pilar: "Pola",
+                masalah: "Masalah 1: Riak dalam Kolam (Gelombang)",
+                image: "./foto/2.jpg",
+                text: "Jika kita mengamati puncak riak melewati sebatang kayu, pola hubungan apa yang terbentuk antara periode (T) dan frekuensi (f)?",
+                options: [
+                    "Frekuensi berbanding lurus dengan periode",
+                    "Frekuensi adalah tinggi rendahnya riak",
+                    "Semakin besar periode, maka frekuensi semakin kecil",
+                    "Periode adalah jarak antara dua puncak",
+                    "Frekuensi tidak dipengaruhi oleh periode"
+                ],
+                correct: 4
+            },
+
+            {
+                pilar: "Abstraksi",
+                masalah: "Masalah 1: Riak dalam Kolam (Gelombang)",
+                image: "./foto/3.webp",
+                text: "Saat menganalisis klasifikasi gelombang air ini berdasarkan arah getarnya, variabel mana yang bisa kita abaikan?",
+                options: [
+                    "Arah rambat gelombang",
+                    "Arah getar partikel air",
+                    "Warna air dan kejernihan kolam",
+                    "Bentuk medium (transversal atau longitudinal)",
+                    "Keberadaan bukit dan lembah"
+                ],
+                correct: 2
+            },
+
+            {
+                pilar: "Algoritma",
+                masalah: "Masalah 1: Riak dalam Kolam (Gelombang)",
+                image: "./foto/4.jpg",
+                text: "Jarak antara dua puncak riak adalah 2m dan merambat dengan kecepatan 4m/s. Langkah logis untuk menemukan frekuensinya adalah...",
+                options: [
+                    "Bagi kecepatan dengan jarak antar puncak (v / λ)",
+                    "Tambahkan kecepatan dengan jarak lalu bagi dua",
+                    "Kalikan jarak dengan kecepatan",
+                    "Kurangi kecepatan dengan jarak",
+                    "Jarak dibagi dengan kecepatan"
+                ],
+                correct: 0
+            },
+
+            {
+                pilar: "Dekomposisi",
+                masalah: "Masalah 2: Gelombang pada Tali",
+                image: "./foto/5.jpg",
+                text: "Dalam eksperimen, seutas tali diberi getaran sehingga membentuk gelombang. Jika ujung tali diikat mati pada tiang, komponen apa yang paling menentukan bentuk gelombang pantulnya?",
+                options: [
+                    "Warna tali dan panjang tiang",
+                    "Jenis simpul yang digunakan untuk mengikat",
+                    "Hilangnya energi karena gesekan tiang",
+                    "Perubahan fase sebesar 180 derajat di titik pantul",
+                    "Arah getar yang searah dengan arah rambat"
+                ],
+                correct: 3
+            },
+
+            {
+                pilar: "Pola",
+                masalah: "Masalah 2: Gelombang pada Tali",
+                image: "./foto/6.png",
+                text: "Dua gelombang identik merambat berlawanan arah pada tali yang sama dan bertemu di satu titik. Pola apa yang akan terbentuk jika terjadi interferensi destruktif total?",
+                options: [
+                    "Terbentuk bukit gelombang yang sangat tinggi",
+                    "Gelombang akan berhenti merambat selamanya",
+                    "Simpangan di titik tersebut menjadi nol (saling meniadakan)",
+                    "Frekuensi gelombang akan berlipat ganda",
+                    "Tali akan putus karena tegangan berlebih"
+                ],
+                correct: 2
+            },
+
+            {
+                pilar: "Abstraksi",
+                masalah: "Masalah 2: Gelombang pada Tali",
+                image: "./foto/7.jpg",
+                text: "Diberikan persamaan gelombang stasioner: y = 0.5 sin (0.4πx) cos (10πt). Untuk menentukan apakah ini ujung tetap atau ujung bebas, variabel mana yang paling mendasar untuk diperhatikan?",
+                options: [
+                    "Nilai amplitudo 0.5",
+                    "Variabel waktu (t) di dalam fungsi cosinus",
+                    "Satuan panjang yang digunakan (meter atau cm)",
+                    "Kecepatan sudut (10π)",
+                    "Letak fungsi Sinus pada variabel jarak (x)"
+                ],
+                correct: 4
+            },
+
+            {
+                pilar: "Algoritma",
+                masalah: "Masalah 2: Gelombang pada Tali",
+                image: "./foto/5.jpg",
+                text: "Seutas tali sepanjang 2m memiliki massa 20gr dan ditarik dengan gaya 10N. Langkah sistematis untuk mencari cepat rambat gelombang (v) pada tali tersebut adalah...",
+                options: [
+                    "Kalikan gaya dengan massa lalu bagi panjang",
+                    "Bagi massa dengan panjang, lalu akar dari (Gaya / hasil bagi tersebut)",
+                    "Langsung menggunakan rumus v = f x λ",
+                    "Gaya dibagi dengan massa total tali",
+                    "Akar dari (Gaya x Panjang / Massa)"
+                ],
+                correct: 4
+            },
+
+            {
+                pilar: "Dekomposisi",
+                masalah: "Masalah 3: Konser Musik dan Kebisingan (Taraf Intensitas Bunyi)",
+                image: "./foto/8.jpg",
+                text: "Saat mendengar suara speaker di konser, kita merasakan getaran di udara. Komponen apa yang harus ada agar gelombang bunyi dapat sampai ke telinga kita?",
+                options: [
+                    "Sumber getaran, medium rambat (udara), dan penerima",
+                    "Ruang hampa udara dan cahaya yang terang",
+                    "Hanya kabel listrik dan volume yang tinggi",
+                    "Suhu ruangan yang sangat dingin",
+                    "Warna dari alat musik yang dimainkan"
+                ],
+                correct: 0
+            },
+
+            {
+                pilar: "Pola",
+                masalah: "Masalah 3: Konser Musik dan Kebisingan (Taraf Intensitas Bunyi)",
+                image: "./foto/9.png",
+                text: "Jika jarak kita ke sumber bunyi menjadi 2 kali lebih jauh, maka intensitas bunyi yang kita dengar akan mengecil. Pola hubungan antara Intensitas (I) dan jarak (r) adalah...",
+                options: [
+                    "Intensitas berbanding lurus dengan jarak",
+                    "Intensitas berbanding terbalik dengan kuadrat jarak (1/r²)",
+                    "Intensitas tidak dipengaruhi oleh jarak",
+                    "Intensitas selalu tetap di mana pun posisi kita",
+                    "Intensitas sebanding dengan akar dari jarak"
+                ],
+                correct: 1
+            },
+
+            {
+                pilar: "Abstraksi",
+                masalah: "Masalah 3: Konser Musik dan Kebisingan (Taraf Intensitas Bunyi)",
+                image: "./foto/10.jpg",
+                text: "Dua buah dawai gitar menghasilkan bunyi yang frekuensinya hampir sama, sehingga terdengar suara yang 'berdenyut' (layangan). Apa variabel utama yang menentukan frekuensi layangan tersebut?",
+                options: [
+                    "Jumlah total kedua frekuensi tersebut",
+                    "Jenis bahan senar yang digunakan",
+                    "Waktu lamanya dawai dipetik",
+                    "Selisih antara kedua frekuensi tersebut",
+                    "Warna suara (timbre) dari gitar"
+                ],
+                correct: 3
+            },
+
+            {
+                pilar: "Algoritma",
+                masalah: "Masalah 3: Konser Musik dan Kebisingan (Taraf Intensitas Bunyi)",
+                image: "./foto/11.png",
+                text: "Taraf intensitas satu mesin adalah 50 dB. Jika ada 10 mesin identik yang dinyalakan bersamaan, langkah sistematis untuk mencari total Taraf Intensitasnya (TI) adalah...",
+                options: [
+                    "Mengalikan 50 dB dengan 10 mesin (500 dB)",
+                    "Menggunakan rumus: TI1 + 10 log(n)",
+                    "Menambahkan 50 dB dengan 10 (60 dB)",
+                    "Membagi 50 dB dengan 10 mesin (5 dB)",
+                    "Mengurangi 50 dB dengan logaritma jumlah mesin"
+                ],
+                correct: 1
+            },
+
+            {
+                pilar: "Dekomposisi",
+                masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
+                image: "./foto/13.png",
+                text: "Sebuah ambulans mendekati seorang pejalan kaki sambil menyalakan sirine. Komponen variabel apa saja yang harus kita identifikasi untuk menentukan frekuensi yang didengar pejalan kaki tersebut?",
+                options: [
+                    "Panjang jalan raya dan jumlah kendaraan lain",
+                    "Warna mobil ambulans dan jenis sirene",
+                    "Kecepatan bunyi di udara, kecepatan sumber, dan kecepatan pendengar",
+                    "Waktu keberangkatan ambulans dari rumah sakit",
+                    "Suhu aspal jalan raya saat itu"
+                ],
+                correct: 2
+            },
+
+            {
+                pilar: "Pola",
+                masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
+                image: "./foto/12.jpeg",
+                text: "Amati pola perubahan nada sirine: Saat ambulans mendekati pendengar, suara terdengar lebih melengking (tinggi), namun saat menjauh terdengar lebih berat (rendah). Apa yang menyebabkan pola ini terjadi?",
+                options: [
+                    "Terjadi perubahan panjang gelombang relatif akibat gerak relatif",
+                    "Frekuensi sirine dari mesin ambulans memang berubah-ubah",
+                    "Amplitudo suara sirine mengecil secara otomatis",
+                    "Udara di depan ambulans menjadi lebih panas",
+                    "Kecepatan bunyi di udara meningkat drastis"
+                ],
+                correct: 0
+            },
+
+            {
+                pilar: "Abstraksi",
+                masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
+                image: "./foto/14.png",
+                text: "Dalam rumus Efek Doppler, kita sering menemukan tanda plus (+) atau minus (-). Apa esensi aturan tanda untuk kecepatan sumber (Vs) jika sumber bunyi menjauhi pendengar?",
+                options: [
+                    "Vs bernilai negatif agar frekuensi menjadi lebih besar",
+                    "Vs harus dianggap nol jika pendengar diam",
+                    "Vs selalu positif dalam kondisi apapun",
+                    "Vs bernilai positif karena menambah jarak dan memperkecil frekuensi",
+                    "Tanda Vs hanya bergantung pada jenis bunyi"
+                ],
+                correct: 3
+            },
+
+            {
+                pilar: "Algoritma",
+                masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
+                image: "./foto/15.png",
+                text: "Sebuah sumber bunyi (400 Hz) mendekati pendengar diam dengan kecepatan 20 m/s (v udara = 340 m/s). Langkah sistematis yang benar untuk menghitung frekuensi pendengar (fp) adalah...",
+                options: [
+                    "Kurangi v udara dengan v sumber, lalu bagi v udara dengan hasil tadi dan kalikan fs",
+                    "Tambahkan semua kecepatan lalu bagi dengan frekuensi sumber",
+                    "Langsung kalikan kecepatan sumber dengan frekuensi sumber",
+                    "Bagi frekuensi sumber dengan kecepatan udara saja",
+                    "Kurangi kecepatan udara dengan frekuensi lalu tambah kecepatan sumber"
+                ],
+                correct: 0
+            },
+
+            {
+                pilar: "Dekomposisi",
+                masalah: "Masalah 5: Cepat Rambat, Resonansi dan Penerapan Gelombang Bunyi",
+                image: "./foto/17.jpg",
+                text: "Cepat rambat bunyi berbeda-beda tergantung mediumnya. Jika kita ingin menguraikan faktor yang mempengaruhi kecepatan bunyi dalam gas (udara), variabel mana yang paling berpengaruh?",
+                options: [
+                    "Warna gas dan bau gas tersebut",
+                    "Volume wadah tempat gas berada",
+                    "Ketinggian tempat gas dari permukaan laut",
+                    "Kecepatan angin yang bertiup",
+                    "Suhu mutlak gas dan massa molar gas"
+                ],
+                correct: 4
+            },
+
+            {
+                pilar: "Pola",
+                masalah: "Masalah 5: Cepat Rambat, Resonansi dan Penerapan Gelombang Bunyi",
+                image: "./foto/16.png",
+                text: "Amati pola perambatan bunyi: Bunyi merambat paling cepat di besi (padat), lebih lambat di air (cair), dan paling lambat di udara (gas). Pola apa yang menyebabkan hal ini terjadi?",
+                options: [
+                    "Zat padat memiliki suhu yang lebih tinggi",
+                    "Kerapatan partikel dan kekuatan ikatan antar molekul medium",
+                    "Zat gas memiliki lebih banyak oksigen",
+                    "Air memiliki tekanan yang berubah-ubah",
+                    "Besi memiliki permukaan yang mengkilap"
+                ],
+                correct: 1
+            },
+
+            {
+                pilar: "Abstraksi",
+                masalah: "Masalah 5: Cepat Rambat, Resonansi dan Penerapan Gelombang Bunyi",
+                image: "./foto/18.jpg",
+                text: "Teknologi SONAR digunakan untuk mengukur kedalaman laut dengan memancarkan bunyi. Saat menghitung kedalaman, mengapa hasil perkalian (v x t) harus dibagi dua?",
+                options: [
+                    "Karena bunyi merambat ke dua arah berbeda",
+                    "Karena alat sonar hanya bekerja setengah waktu",
+                    "Karena massa jenis air laut sangat besar",
+                    "Karena frekuensi bunyi yang digunakan sangat tinggi",
+                    "Karena bunyi menempuh jarak pergi dan pulang (pantulan)"
+                ],
+                correct: 4
+            },
+
+            {
+                pilar: "Algoritma",
+                masalah: "Masalah 5: Cepat Rambat, Resonansi dan Penerapan Gelombang Bunyi",
+                image: "./foto/19.jpg",
+                text: "Diketahui modulus Young baja adalah 2 x 10^11 N/m² dan massa jenisnya 8000 kg/m³. Langkah logis untuk menentukan cepat rambat bunyi di dalam baja adalah...",
+                options: [
+                    "Bagi massa jenis dengan modulus Young lalu diakar",
+                    "Kalikan modulus Young dengan massa jenis",
+                    "Akar dari hasil pembagian modulus Young dengan massa jenis (√(E/ρ))",
+                    "Kurangi modulus Young dengan massa jenis",
+                    "Modulus Young dibagi dengan kuadrat massa jenis"
+                ],
+                correct: 2
+            },
+            // Tambahkan soal lainnya hingga 20...
+        ];
+
+        function showQuestion() {
+            const q = questions[currentIdx];
+            
+            // UI Updates
+            document.getElementById('q-count').innerText = `${currentIdx + 1}/${questions.length}`;
+            document.getElementById('progress').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+            document.getElementById('q-masalah').innerText = q.masalah;
+            document.getElementById('pilar-tag').innerText = q.pilar;
+            document.getElementById('q-image').src = q.image;
+            document.getElementById('q-text').innerText = q.text;
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('div');
+                btn.className = "option-card glass p-4 rounded-2xl flex items-center gap-4 animate__animated animate__fadeInUp";
+                btn.style.animationDelay = `${index * 0.1}s`;
+                btn.id = `opt-${index}`;
+                btn.innerHTML = `
+                    <div class="option-label w-10 h-10 rounded-xl bg-white flex items-center justify-center font-bold text-blue-600 shadow-sm transition">
+                        ${String.fromCharCode(65 + index)}
+                    </div>
+                    <span class="text-slate-700 font-bold text-sm leading-tight">${opt}</span>
+                `;
+                btn.onclick = () => handleAnswer(index);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(choice) {
+            const q = questions[currentIdx];
+            const allOptions = document.querySelectorAll('.option-card');
+            
+            // Disable all options
+            allOptions.forEach(card => card.classList.add('disabled'));
+
+            // Menunjukkan jawaban benar/salah
+            const selectedBtn = document.getElementById(`opt-${choice}`);
+            const correctBtn = document.getElementById(`opt-${q.correct}`);
+
+            if(choice === q.correct) {
+                selectedBtn.classList.add('correct');
+                const pilarKey = q.pilar.toLowerCase();
+                report[pilarKey] += 1;
+                report.total_score += 5;
+            } else {
+                selectedBtn.classList.add('wrong');
+                correctBtn.classList.add('correct'); // Tunjukkan yang benarnya
+            }
+
+            // Jeda sebentar sebelum pindah
+            setTimeout(() => {
+                if(currentIdx < questions.length - 1) {
+                    currentIdx++;
+                    const card = document.getElementById('question-card');
+                    card.classList.remove('animate__fadeIn');
+                    card.classList.add('animate__fadeOutLeft');
+                    
+                    setTimeout(() => {
+                        card.classList.remove('animate__fadeOutLeft');
+                        card.classList.add('animate__fadeInRight');
+                        showQuestion();
+                    }, 400);
+                } else {
+                    finishTest();
+                }
+            }, 1500); // 1.5 detik jeda feedback
+        }
+
+async function finishTest() {
+            // Tampilkan loading agar user tahu data sedang dikirim
+            Swal.fire({
+                title: 'Menyimpan Hasil...',
+                html: 'Mohon tunggu sebentar...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const currentUser = JSON.parse(localStorage.getItem('userPhiQu'));
+            const currentAttempts = localStorage.getItem('phiQu_pre_attempts') || "1";
+
+            const payload = {
+                action: 'submit_pretest',
+                username: currentUser.username,
+                nilai_fisika: report.total_score,
+                dekomposisi: Math.round((report.dekomposisi / 5) * 100),
+                pola: Math.round((report.pola / 5) * 100),
+                abstraksi: Math.round((report.abstraksi / 5) * 100),
+                algoritma: Math.round((report.algoritma / 5) * 100),
+                percobaan: currentAttempts
+            };
+
+            try {
+                // Menggunakan fetch dengan mode 'no-cors' untuk Apps Script
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload)
+                });
+
+                // Jika sukses (karena no-cors tidak bisa baca respon, kita asumsikan sukses jika tidak masuk ke catch)
+                setTimeout(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Pre-Test Selesai!',
+                        text: 'Hasil berhasil disimpan. Mari lanjut ke materi.',
+                        confirmButtonText: 'Lanjut ke Materi',
+                        allowOutsideClick: false
+                    }).then(() => {
+                        window.location.href = "./materi/cover.html"; // ARAHKAN KE MATERI
+                    });
+                }, 1000);
+
+            } catch (e) {
+                console.error("Error submit:", e);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Mengirim Data',
+                    text: 'Terjadi kesalahan server. Silakan hubungi admin atau cek profil Anda.',
+                    confirmButtonText: 'Kembali ke Profil'
+                }).then(() => {
+                    window.location.href = "profile.html"; // ARAHKAN KE PROFIL JIKA GAGAL
+                });
+            }
+        }
+
+        window.onload = () => {
+    if(!localUser) { window.location.href = "materi.html"; return; }
+
+    // --- LOGIKA PENAMBAHAN PERCOBAAN ---
+    let attempts = parseInt(localStorage.getItem('phiQu_pre_attempts')) || 0;
+    attempts++; // Tambah 1 setiap kali masuk ke halaman pre-test
+    localStorage.setItem('phiQu_pre_attempts', attempts);
+    // -----------------------------------
+
+    showQuestion();
+};
+    </script>
+</body>
+</html>

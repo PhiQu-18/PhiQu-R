@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil | PhiQu-R</title>
+    <link rel="icon" type="image/png" href="./foto/1.2.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root { --primary: #2563eb; --accent: #7c3aed; --bg: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #1e293b; padding-bottom: 110px; }
+        
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 85px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+            border-top: 1px solid #e2e8f0; z-index: 1000;
+            display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            color: #64748b; font-size: 10px; font-weight: 700; transition: 0.3s;
+            border: none; background: transparent; cursor: pointer; text-decoration: none;
+        }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-item:active { color: var(--primary); transform: scale(0.9); }
+
+        .nav-main-wrapper { flex: 1; display: flex; justify-content: center; position: relative; }
+        .btn-start-main {
+            width: 62px; height: 62px; background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 24px; position: absolute; top: -45px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            border: 5px solid var(--bg); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-start-main:hover { transform: scale(1.1) rotate(5deg); }
+
+        #preview-foto { width: 100px; height: 100px; object-fit: cover; border-radius: 20px; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .swal-field { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 12px; outline: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <main id="main-profile" class="max-w-6xl mx-auto px-4 pt-8 animate__animated animate__fadeIn">
+        
+        <div class="glass rounded-[2.5rem] p-6 mb-8 flex flex-col md:flex-row items-center gap-6 shadow-sm">
+            <div class="relative group cursor-pointer" onclick="forceCompleteProfile()">
+                <img id="user-avatar" src="" class="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] object-cover shadow-xl border-4 border-white bg-slate-100">
+                <div class="absolute -bottom-2 -right-2 bg-blue-600 text-white w-8 h-8 rounded-xl flex items-center justify-center border-2 border-white">
+                    <i class="fa-solid fa-camera text-xs"></i>
+                </div>
+            </div>
+            <div class="text-center md:text-left flex-1">
+                <h1 id="user-name" class="text-3xl font-extrabold text-slate-800 tracking-tight">Memuat...</h1>
+                <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-2">
+                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase border border-blue-100">
+                        <i class="fa-solid fa-school mr-1"></i> <span id="user-school">Sekolah...</span>
+                    </span>
+                    <span class="px-3 py-1 bg-green-50 text-green-600 rounded-lg text-[10px] font-black border border-green-100">
+                        <i class="fa-solid fa-phone mr-1"></i> <span id="user-hp">WhatsApp...</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="glass p-5 rounded-[2rem] text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Pre-Test</p>
+                <h3 id="score-pre" class="text-3xl font-black text-slate-700">0</h3>
+                <span id="att-pre" class="text-[9px] font-bold text-slate-400">0 Kali</span>
+            </div>
+            <div class="glass p-5 rounded-[2rem] text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Post-Test</p>
+                <h3 id="score-post" class="text-3xl font-black text-blue-600">0</h3>
+                <span id="att-post" class="text-[9px] font-bold text-slate-400">0 Kali</span>
+            </div>
+            <div class="glass p-5 rounded-[2rem] text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Nilai Fisika (x̄)</p>
+                <h3 id="avg-fisika" class="text-3xl font-black text-slate-700">0</h3>
+            </div>
+            <div class="glass p-5 rounded-[2rem] text-center">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Status CT</p>
+                <h3 id="strongest-ct" class="text-sm font-black text-purple-600 uppercase">Menganalisis...</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="glass p-6 rounded-[2.5rem]">
+                <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-6"><i class="fa-solid fa-chart-line mr-2 text-blue-600"></i>Tren Nilai Fisika</h4>
+                <div class="h-[250px]"><canvas id="lineChart"></canvas></div>
+            </div>
+            <div class="glass p-6 rounded-[2.5rem]">
+                <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-6 text-center"><i class="fa-solid fa-spider mr-2 text-purple-600"></i>Pilar Computational Thinking</h4>
+                <div class="h-[250px]"><canvas id="radarChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="glass rounded-[2.5rem] overflow-hidden mb-8">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase">
+                        <tr>
+                            <th class="px-6 py-4">Kategori</th>
+                            <th class="px-6 py-4">Skor</th>
+                            <th class="px-6 py-4">Dekomposisi</th>
+                            <th class="px-6 py-4">Pola</th>
+                            <th class="px-6 py-4">Abstraksi</th>
+                            <th class="px-6 py-4">Algoritma</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-100 text-sm font-bold text-slate-600"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <button onclick="showHelp()" class="nav-item">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>Bantuan</span>
+        </button>
+        <button onclick="showAbout()" class="nav-item">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Tentang</span>
+        </button>
+        <div class="nav-main-wrapper">
+            <a href="pre.html" class="btn-start-main">
+                <i class="fa-solid fa-play"></i>
+            </a>
+        </div>
+        <a href="https://wa.me/6283182514910" target="_blank" class="nav-item">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Admin</span>
+        </a>
+        <button onclick="logout()" class="nav-item text-red-500">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Keluar</span>
+        </button>
+    </nav>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwv799_EYwLRsr_C3FClkR_RMUoaA5oE_cGQMhuEo80C-1OSklxve4Am2KN2Iv4viYB/exec";
+        let localUser = JSON.parse(localStorage.getItem('userPhiQu'));
+
+        window.onload = async () => {
+            if (!localUser) { window.location.href = "index.html"; return; }
+            updateUI(localUser);
+            
+            // Cek kelengkapan profil
+            if (!localUser.sekolah || !localUser.hp || !localUser.foto_url) {
+                document.getElementById('main-profile').classList.add('blur-xl', 'pointer-events-none');
+                forceCompleteProfile();
+            } else {
+                fetchLatestData();
+            }
+        };
+
+        async function fetchLatestData() {
+    try {
+        // Tambahkan timestamp agar tidak terkena cache browser
+        const res = await fetch(`${API_URL}?action=get_data&username=${localUser.username}&t=${new Date().getTime()}`);
+        const db = await res.json();
+        
+        if (db.status === "success" && db.data) {
+            // Gabungkan data lama dan baru agar tidak ada info yang hilang
+            const updatedData = { ...localUser, ...db.data };
+            localStorage.setItem('userPhiQu', JSON.stringify(updatedData));
+            localUser = updatedData;
+            
+            // Refresh UI dengan data terbaru
+            updateUI(updatedData);
+            
+            // Lepas blur jika data sudah lengkap
+            if (updatedData.sekolah && updatedData.hp && updatedData.foto_url) {
+                document.getElementById('main-profile').classList.remove('blur-xl', 'pointer-events-none');
+            }
+        }
+    } catch (e) { 
+        console.error("Gagal mengambil data terbaru:", e);
+        Swal.fire({
+            icon: 'warning',
+            title: 'Koneksi Lemah',
+            text: 'Menampilkan data terakhir yang tersimpan di perangkat.'
+        });
+    }
+}
+
+function updateUI(data) {
+    if (!data) return;
+
+    // Identitas Dasar
+    document.getElementById('user-name').innerText = data.nama || "User";
+    document.getElementById('user-school').innerText = data.sekolah || "Belum Diatur";
+    document.getElementById('user-hp').innerText = data.hp || "-";
+    
+    const avatarFallback = `https://ui-avatars.com/api/?name=${data.nama}&background=2563eb&color=fff`;
+    document.getElementById('user-avatar').src = data.foto_url && data.foto_url.startsWith('data:image') ? data.foto_url : avatarFallback;
+    
+    // Ambil data dengan fallback (mengantisipasi snake_case atau camelCase)
+    const scorePre = parseInt(data.score_pre || 0);
+    const scorePost = parseInt(data.score_post || 0);
+    const attPre = data.attempt_pre || 0;
+    const attPost = data.attempt_post || 0;
+
+    document.getElementById('score-pre').innerText = scorePre;
+    document.getElementById('score-post').innerText = scorePost;
+    document.getElementById('att-pre').innerText = attPre + " Kali";
+    document.getElementById('att-post').innerText = attPost + " Kali";
+    
+    const avg = scorePost > 0 ? ((scorePre + scorePost) / 2).toFixed(0) : scorePre;
+    document.getElementById('avg-fisika').innerText = avg;
+    
+    // Mapping Pilar CT
+    // data.ct_post biasanya datang dalam bentuk Array dari Apps Script update kita
+    const ctData = Array.isArray(data.ct_post) ? data.ct_post : [0,0,0,0];
+    const labels = ['Dekomposisi', 'Pola', 'Abstraksi', 'Algoritma'];
+    const maxVal = Math.max(...ctData);
+    const idx = ctData.indexOf(maxVal);
+    document.getElementById('strongest-ct').innerText = maxVal > 0 ? labels[idx] : "Belum Tes";
+
+    // Panggil fungsi render dengan data yang sudah diproses
+    renderCharts(data, ctData); 
+    renderTable(data);
+}
+
+function renderCharts(data, ctPostData) {
+    ['lineChart', 'radarChart'].forEach(id => {
+        const chart = Chart.getChart(id);
+        if (chart) chart.destroy();
+    });
+
+    // Line Chart
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: ['Mulai', 'Pre-Test', 'Post-Test'],
+            datasets: [{
+                label: 'Nilai Fisika',
+                // SESUAIKAN DISINI
+                data: [0, data.score_pre || 0, data.score_post || 0], 
+                borderColor: '#2563eb', 
+                backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { 
+            maintainAspectRatio: false,
+            scales: { y: { min: 0, max: 100 } }
+        }
+    });
+
+    // Radar Chart
+    new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+            labels: ['Dekomposisi', 'Pola', 'Abstraksi', 'Algoritma'],
+            datasets: [
+                { 
+                    label: 'Pre', 
+                    data: data.ct_pre || [0,0,0,0], 
+                    borderColor: '#94a3b8', 
+                    backgroundColor: 'transparent' 
+                },
+                { 
+                    label: 'Post', 
+                    data: ctPostData || [0,0,0,0], 
+                    borderColor: '#2563eb', 
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)' 
+                }
+            ]
+        },
+        options: { 
+            maintainAspectRatio: false,
+            scales: { r: { min: 0, max: 100, ticks: { display: false } } }
+        }
+    });
+}
+
+            // Radar Chart - Pilar CT
+            new Chart(document.getElementById('radarChart'), {
+                type: 'radar',
+                data: {
+                    labels: ['Dekomposisi', 'Pola', 'Abstraksi', 'Algoritma'],
+                    datasets: [
+                        { label: 'Pre', data: data.ctPre || [0,0,0,0], borderColor: '#94a3b8', backgroundColor: 'transparent' },
+                        { label: 'Post', data: data.ctPost || [0,0,0,0], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)' }
+                    ]
+                },
+                options: { 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        r: { 
+                            min: 0, 
+                            max: 100,
+                            ticks: { display: false } 
+                        } 
+                    } 
+                }
+            });
+
+        function renderTable(data) {
+    const tbody = document.getElementById('table-body');
+    const sessions = [
+        { 
+            name: 'Pre-Test', 
+            score: data.score_pre || 0, 
+            attempt: data.attempt_pre || 0,
+            ct: data.ct_pre || [0,0,0,0] 
+        },
+        { 
+            name: 'Post-Test', 
+            score: data.score_post || 0, 
+            attempt: data.attempt_post || 0,
+            ct: data.ct_post || [0,0,0,0] 
+        }
+    ];
+
+    tbody.innerHTML = sessions.map(s => `
+        <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-6 py-4">
+                <div class="text-slate-800 font-bold">${s.name}</div>
+                <div class="text-[10px] text-slate-400 uppercase font-black">Percobaan: ${s.attempt}x</div>
+            </td>
+            <td class="px-6 py-4 text-blue-600 font-black text-lg">${s.score}</td>
+            <td class="px-6 py-4">${s.ct[0] || 0}</td>
+            <td class="px-6 py-4">${s.ct[1] || 0}</td>
+            <td class="px-6 py-4">${s.ct[2] || 0}</td>
+            <td class="px-6 py-4">${s.ct[3] || 0}</td>
+        </tr>
+    `).join('');
+}
+
+        async function forceCompleteProfile() {
+            Swal.fire({
+                title: 'Lengkapi Profil',
+                html: `
+                    <div class="text-left space-y-4">
+                        <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border-2 border-dashed border-slate-200">
+                            <img id="preview-foto" src="https://ui-avatars.com/api/?name=${localUser.nama}">
+                            <input type="file" id="file-input" accept="image/*" class="hidden">
+                            <button onclick="document.getElementById('file-input').click()" class="flex-1 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase">Pilih Foto</button>
+                        </div>
+                        <input id="inp-sekolah" class="swal-field" placeholder="Nama Sekolah" value="${localUser.sekolah || ''}">
+                        <input id="inp-hp" type="number" class="swal-field" placeholder="No. WhatsApp" value="${localUser.hp || ''}">
+                    </div>
+                `,
+                confirmButtonText: 'Simpan Profil',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    const input = document.getElementById('file-input');
+                    const preview = document.getElementById('preview-foto');
+                    input.onchange = (e) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const img = new Image();
+                            img.src = ev.target.result;
+                            img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = 300; canvas.height = 300;
+                                ctx.drawImage(img, 0, 0, 300, 300);
+                                const base64 = canvas.toDataURL('image/jpeg', 0.7);
+                                preview.src = base64;
+                                preview.setAttribute('data-base64', base64);
+                            }
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    };
+                },
+                preConfirm: () => {
+                    const sekolah = document.getElementById('inp-sekolah').value;
+                    const hp = document.getElementById('inp-hp').value;
+                    const foto = document.getElementById('preview-foto').getAttribute('data-base64') || localUser.foto_url;
+                    if (!sekolah || !hp || !foto) return Swal.showValidationMessage('Mohon isi semua data!');
+                    return { sekolah, hp, foto_url: foto };
+                }
+            }).then(result => {
+                if (result.isConfirmed) saveProfile(result.value);
+            });
+        }
+
+        async function saveProfile(data) {
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+            
+            // FIX: Mengirim sebagai JSON string untuk menghindari limit URL
+            const payload = JSON.stringify({
+                action: 'update_profile',
+                username: localUser.username,
+                sekolah: data.sekolah,
+                hp: data.hp,
+                foto_url: data.foto_url
+            });
+
+            try {
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: payload 
+                });
+
+                // Update lokal
+                localUser = { ...localUser, ...data };
+                localStorage.setItem('userPhiQu', JSON.stringify(localUser));
+                
+                Swal.fire('Berhasil!', 'Profil Anda telah diperbarui.', 'success').then(() => {
+                    location.reload();
+                });
+            } catch (e) {
+                Swal.fire('Gagal', 'Terjadi kesalahan koneksi.', 'error');
+            }
+        }
+
+        function showHelp() {
+    Swal.fire({
+        title: 'Pusat Bantuan PhiQu-R',
+        html: `
+            <div class="text-left text-sm space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scroll">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center font-black">1</div>
+                        <h5 class="font-black text-blue-800 uppercase text-[11px] tracking-wider">Lengkapi Profil</h5>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed">Pastikan <b>Foto, Nama Sekolah, dan WhatsApp</b> sudah terisi dengan benar. Klik pada foto profil Anda untuk mengubah data kapan saja.</p>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center font-black">2</div>
+                        <h5 class="font-black text-purple-800 uppercase text-[11px] tracking-wider">Kerjakan Pre-Test</h5>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed">Klik tombol <b>Play (Mulai)</b> di menu bawah untuk memulai. Pre-Test digunakan untuk mengukur kemampuan awal Anda sebelum masuk ke materi.</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-green-600 text-white rounded-lg flex items-center justify-center font-black">3</div>
+                        <h5 class="font-black text-green-800 uppercase text-[11px] tracking-wider">Analisis Computational Thinking</h5>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed">Setelah tes, lihat <b>Grafik Radar</b>. Grafik ini menunjukkan kekuatan Anda di 4 pilar: Dekomposisi, Pengenalan Pola, Abstraksi, dan Algoritma.</p>
+                </div>
+
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-amber-600 text-white rounded-lg flex items-center justify-center font-black">4</div>
+                        <h5 class="font-black text-amber-800 uppercase text-[11px] tracking-wider">Evaluasi Akhir (Post-Test)</h5>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed">Kerjakan Post-Test setelah mempelajari materi untuk melihat <b>Tren Peningkatan</b> nilai Anda pada grafik garis di atas.</p>
+                </div>
+
+                <div class="text-center py-2 text-[10px] text-slate-400 font-bold italic">
+                    <i class="fa-solid fa-info-circle mr-1"></i> Hubungi Admin jika menemui kendala teknis.
+                </div>
+            </div>
+        `,
+        confirmButtonText: 'Saya Mengerti!',
+        confirmButtonColor: '#2563eb',
+        width: '500px', // Membuat modal sedikit lebih lebar agar teks nyaman dibaca
+        showClass: { popup: 'animate__animated animate__zoomInUp' },
+        hideClass: { popup: 'animate__animated animate__fadeOutDown' }
+    });
+}
+
+        function showAbout() {
+    Swal.fire({
+        title: 'Tentang Platform PhiQu-R',
+        html: `
+            <div class="space-y-6 text-sm text-left max-h-[70vh] overflow-y-auto pr-2 custom-scroll">
+                <div class="flex gap-3 mb-4">
+                    <div class="flex-1 h-20 bg-blue-50 rounded-2xl border border-blue-100 p-2 flex items-center justify-center overflow-hidden shadow-inner">
+                        <img src="./foto/1.2.png" alt="Logo PhiQu-R" class="h-full object-contain">
+                    </div>
+                    <div class="flex-1 h-20 bg-purple-50 rounded-2xl border border-purple-100 overflow-hidden shadow-inner">
+                        <img src="./foto/1.png" alt="Ilustrasi CT" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <div class="glass p-5 rounded-3xl border border-blue-100 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-rocket text-sm"></i>
+                        </div>
+                        <h5 class="font-black text-blue-800 uppercase text-[10px] tracking-widest">Inovasi Pembelajaran</h5>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-semibold"><b>PhiQu-R</b> adalah platform media pembelajaran Fisika modern yang dirancang untuk mengintegrasikan <b>Computational Thinking (CT)</b> ke dalam penyelesaian masalah fisika.</p>
+                </div>
+
+                <div class="space-y-3">
+                    <h5 class="font-black text-slate-800 uppercase text-[10px] tracking-widest text-center">Fokus Kami</h5>
+                    <div class="grid grid-cols-2 gap-2 text-[11px] text-center font-bold">
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg">Dekomposisi</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg">Pengenalan Pola</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg">Abstraksi</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg">Algoritma</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50/50 p-4 rounded-3xl border border-blue-100/50">
+                    <p class="text-slate-600 leading-relaxed">Platform ini bertujuan membantu Anda tidak hanya memahami rumus, tetapi juga mengasah logika, analisis, dan *problem solving* yang sistematis seperti seorang *computer scientist*.</p>
+                </div>
+
+                <div class="flex flex-col items-center pt-6 border-t border-slate-100 mt-6 gap-2">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Pengembang Utama</div>
+                    
+                    <div class="w-48 h-16 rounded-xl flex items-center justify-center p-2 relative">
+                        <img src="./foto/a.jpeg" alt="Ammar Dalimunthe" class="w-full h-full object-contain opacity-70">
+                        </div>
+                    
+                    <div class="text-xs font-black text-slate-800 tracking-tight">Muammar MD | PhiQu Dev</div>
+                </div>
+            </div>
+        `,
+        confirmButtonText: 'Lanjutkan Belajar!',
+        confirmButtonColor: '#2563eb',
+        width: '500px',
+        showClass: { popup: 'animate__animated animate__jackInTheBox' },
+        hideClass: { popup: 'animate__animated animate__zoomOutDown' }
+    });
+}
+
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    </script>
+</body>
+</html>

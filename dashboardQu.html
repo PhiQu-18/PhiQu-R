@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DashboardQu | PhiQu-R</title>
+    <link rel="icon" type="image/png" href="./foto/1.2.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root { --primary: #2563eb; --purple: #8b5cf6; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #1e293b; position: relative; overflow-x: hidden; }
+body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('./foto/a.jpeg') center/cover; opacity: 0.1; z-index: -2; }
+body.auth-active::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(120,219,255,0.3) 0%, transparent 50%); animation: float 20s ease-in-out infinite; z-index: -1; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
+        
+        /* Navigation Dock */
+        .nav-dock {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #ffffff; display: flex; justify-content: space-around;
+            padding: 10px 0 25px 0; border-top: 1px solid #e2e8f0; z-index: 1000;
+        }
+        @media (min-width: 1024px) {
+            .nav-dock { width: 500px; left: 50%; transform: translateX(-50%); bottom: 20px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #64748b; font-size: 10px; font-weight: 800; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-refresh { background: var(--primary); color: white !important; width: 55px; height: 55px; border-radius: 50%; justify-content: center; margin-top: -30px; border: 5px solid #f8fafc; }
+
+        /* PRINT OPTIMIZATION */
+        @media print {
+            @page { size: A4; margin: 1cm; }
+            body { background: white !important; padding: 0 !important; }
+            .no-print, .nav-dock, #auth-overlay, button, #search-input { display: none !important; }
+            #dashboard-content { display: block !important; opacity: 1 !important; }
+            .glass { border: 1px solid #ddd !important; box-shadow: none !important; break-inside: avoid; margin-bottom: 15px !important; }
+            .grid { display: grid !important; gap: 10px !important; }
+            canvas { max-width: 100% !important; height: 250px !important; }
+            table { font-size: 10px !important; }
+            .bg-slate-50 { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body class="pb-32">
+
+<div id="auth-overlay" class="fixed inset-0 flex items-center justify-center p-8 z-[9999] animate__animated animate__fadeIn">
+        <div class="glass p-10 rounded-[3rem] w-full max-w-lg text-center shadow-2xl relative overflow-hidden animate__animated animate__fadeInUp">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-gradient-to-tr from-emerald-400/20 to-blue-400/20 rounded-full blur-2xl"></div>
+            <img src="./foto/1.2.png" alt="Logo" class="mx-auto w-24 h-24 object-contain mb-6 animate__animated animate__bounceIn">
+            <h2 class="text-4xl font-black mb-8 bg-gradient-to-r from-slate-800 via-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight drop-shadow-lg">Admin Dashboard</h2>
+            <div class="relative mb-8">
+                <input type="password" id="admin-pass" class="w-full px-8 py-6 rounded-[3rem] bg-white/70 backdrop-blur-sm border-2 border-white/50 text-center font-black text-xl tracking-widest text-slate-800 placeholder-slate-400 focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1" placeholder="● KETIK PASSWORD ●">
+                <i class="fa-solid fa-lock absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+            </div>
+            <button onclick="checkAuth()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 rounded-[3rem] font-black text-xl shadow-2xl hover:shadow-3xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group">
+                <span class="relative z-10">MASUK DASHBOARD</span>
+                <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+        </div>
+    </div>
+
+    <div id="dashboard-content" class="hidden opacity-0 transition-opacity duration-700">
+        <header class="p-6 md:p-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <img src="./foto/1.2.png" alt="Logo" class="w-16 h-16 object-contain">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dashboard<span class="text-blue-600">Qu</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PhiQu-R | By. PhiQu</p>
+                </div>
+            </div>
+            <div class="text-right hidden md:block no-print">
+                <p class="text-sm font-black text-slate-700" id="current-date"></p>
+                <p class="text-[10px] text-green-500 font-bold uppercase">● Database Aktif</p>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 md:px-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                <div class="glass p-6 rounded-[2rem] flex items-center gap-5">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-user-graduate"></i></div>
+                    <div><p class="text-[10px] font-black text-slate-400 uppercase">Total Peserta</p><h2 id="total-siswa" class="text-3xl font-black">0</h2></div>
+                </div>
+                <div class="grid grid-cols-2 md:contents gap-4">
+                    <div class="glass p-6 rounded-[2rem] border-b-4 border-emerald-500">
+                        <p class="text-[10px] font-black text-slate-400 uppercase">Avg. Fisika Pre-Test</p>
+                        <h2 id="avg-pre" class="text-3xl font-black text-emerald-600">0</h2>
+                    </div>
+                    <div class="glass p-6 rounded-[2rem] border-b-4 border-blue-500">
+                        <p class="text-[10px] font-black text-slate-400 uppercase">Avg. Fisika Post-Test</p>
+                        <h2 id="avg-post" class="text-3xl font-black text-blue-600">0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-10">
+                <h3 class="font-black text-xs text-slate-400 uppercase tracking-widest mb-4 ml-2">Rata-Rata Per Pilar CT (0-100)</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-[2.5rem]">
+                        <p class="text-[10px] font-black text-emerald-600 uppercase mb-4 tracking-tighter">● Tahap Pre-Test</p>
+                        <div id="ct-pre-row" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+                    <div class="glass p-6 rounded-[2.5rem]">
+                        <p class="text-[10px] font-black text-blue-600 uppercase mb-4 tracking-tighter">● Tahap Post-Test</p>
+                        <div id="ct-post-row" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+                <div class="glass p-8 rounded-[2.5rem]">
+                    <h4 class="font-black text-slate-800 mb-6 text-sm uppercase tracking-widest">Tren Nilai Fisika Kelas</h4>
+                    <div class="h-[300px]"><canvas id="mainTrendChart"></canvas></div>
+                </div>
+                <div class="glass p-8 rounded-[2.5rem]">
+                    <h4 class="font-black text-slate-800 mb-6 text-sm uppercase tracking-widest">Analisis Pilar CT Kelas</h4>
+                    <div class="h-[300px]"><canvas id="mainRadarChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="glass rounded-[2.5rem] overflow-hidden mb-20">
+                <div class="p-6 border-b flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h3 class="font-black text-slate-800 uppercase text-sm tracking-widest">Database Hasil Siswa</h3>
+                    <input type="text" id="search-input" onkeyup="filterTable()" placeholder="Cari Nama/Sekolah..." class="no-print px-5 py-3 rounded-xl bg-slate-50 border-none ring-1 ring-slate-200 text-sm w-full md:w-80">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-[10px] font-black uppercase text-slate-400">
+                            <tr>
+                                <th class="px-8 py-4">Siswa</th>
+                                <th class="px-8 py-4">Sekolah</th>
+                                <th class="px-8 py-4 text-center">Pre</th>
+                                <th class="px-8 py-4 text-center">Post</th>
+                                <th class="px-8 py-4">Pilar Unggulan</th>
+                                <th class="px-8 py-4 text-center no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-slate-100 font-semibold text-slate-600 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav class="nav-dock no-print hidden" id="nav-dock">
+        <div class="nav-item" onclick="window.open('https://wa.me/6283182514910')"><i class="fa-brands fa-whatsapp"></i><span>Kontak</span></div>
+        <div class="nav-item" onclick="showAbout()"><i class="fa-solid fa-circle-question"></i><span>Info</span></div>
+        <div class="nav-item nav-refresh" onclick="fetchAllData()"><i class="fa-solid fa-rotate"></i><span>Sync</span></div>
+        <div class="nav-item" onclick="downloadCSV()"><i class="fa-solid fa-file-csv"></i><span>Ekspor</span></div>
+        <div class="nav-item" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i><span>Home</span></div>
+    </nav>
+
+    <div id="modal-siswa" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[2000] hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[3rem] animate__animated animate__zoomIn">
+            <div class="p-6 md:p-12">
+                <div class="flex flex-col md:flex-row gap-8 items-center border-b pb-8 mb-8">
+                    <img id="det-foto" class="w-32 h-32 rounded-[2rem] object-cover ring-8 ring-slate-50 shadow-xl" src="">
+                    <div class="text-center md:text-left">
+                        <h2 id="det-nama" class="text-4xl font-black text-slate-800 tracking-tight">Nama Siswa</h2>
+                        <p id="det-sekolah" class="text-blue-600 font-black uppercase text-xs tracking-widest mt-1">NAMA SEKOLAH</p>
+                        <div class="flex gap-2 mt-4 justify-center md:justify-start">
+                            <span class="bg-slate-100 px-4 py-2 rounded-full text-[10px] font-bold">HP: <span id="det-hp"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-slate-50 p-8 rounded-[2.5rem]">
+                        <h5 class="font-black text-[10px] text-slate-400 uppercase mb-6 tracking-widest">Kenaikan Skor Fisika</h5>
+                        <div class="h-[300px]"><canvas id="detLineChart"></canvas></div>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-[2.5rem]">
+                        <h5 class="font-black text-[10px] text-slate-400 uppercase mb-6 tracking-widest">Perbandingan Radar Pilar CT</h5>
+                        <div class="h-[300px]"><canvas id="detRadarChart"></canvas></div>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="mt-8 w-full py-4 bg-slate-100 rounded-2xl font-black text-slate-500 hover:bg-red-500 hover:text-white transition uppercase text-xs tracking-widest">Tutup Detail Siswa</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzeKWuttT9AFYfzwBV9cJJYNQfvwnOSbyVHmiuAy7xTeo5xJv9SIVOKs4G6ACweP61b/exec";
+    const PILAR_LABELS = ['Dekomposisi', 'Pola', 'Abstraksi', 'Algoritma'];
+    
+    let charts = {};
+    let allUsers = []; // Menyimpan data master
+    let currentFilteredData = []; // Menyimpan data yang sedang difilter
+
+    // --- AUTHENTICATION ---
+    function checkAuth() {
+        const pass = document.getElementById('admin-pass').value;
+        if(pass === "a") {
+            document.body.classList.remove('auth-active');
+            document.getElementById('auth-overlay').style.opacity = '0';
+            setTimeout(() => document.getElementById('auth-overlay').remove(), 300);
+            document.getElementById('dashboard-content').classList.remove('hidden');
+            setTimeout(() => document.getElementById('dashboard-content').classList.add('opacity-100'), 50);
+            document.getElementById('nav-dock').classList.remove('hidden');
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+            
+            initCharts();
+            fetchAllData();
+        } else { 
+            Swal.fire('Error', 'Password salah!', 'error'); 
+        }
+    }
+
+    // --- CHART INITIALIZATION ---
+    function initCharts() {
+        charts.mainTrend = new Chart(document.getElementById('mainTrendChart'), {
+            type: 'line',
+            data: { 
+                labels: ['Baseline', 'Pre-Test', 'Post-Test'], 
+                datasets: [{ 
+                    label: 'Skor Fisika', 
+                    data: [0, 0, 0], 
+                    borderColor: '#2563eb', 
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)', 
+                    fill: true, 
+                    tension: 0.4 
+                }] 
+            },
+            options: { maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+        });
+
+        charts.mainRadar = new Chart(document.getElementById('mainRadarChart'), {
+            type: 'radar',
+            data: { 
+                labels: PILAR_LABELS, 
+                datasets: [
+                    { label: 'Rata-Rata Pre', data: [0,0,0,0], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+                    { label: 'Rata-Rata Post', data: [0,0,0,0], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)' }
+                ]
+            },
+            options: { maintainAspectRatio: false, scales: { r: { min: 0, max: 100 } } }
+        });
+    }
+
+    // --- DATA FETCHING ---
+    async function fetchAllData() {
+        Swal.fire({ title: 'Menyinkronkan...', didOpen: () => Swal.showLoading() });
+        try {
+            const res = await fetch(`${API_URL}?action=get_all_data`);
+            const result = await res.json();
+            if (result.status === "success") {
+                allUsers = result.data;
+                updateUI(allUsers); // Tampilkan semua data di awal
+                Swal.close();
+            }
+        } catch (e) { 
+            Swal.fire('Offline', 'Koneksi database gagal', 'error'); 
+        }
+    }
+
+    // --- FILTER LOGIC (SEARCH) ---
+    function filterTable() {
+        const keyword = document.getElementById("search-input").value.toLowerCase();
+        
+        // Filter dari data master allUsers
+        currentFilteredData = allUsers.filter(u => {
+            return (
+                (u.nama && u.nama.toLowerCase().includes(keyword)) ||
+                (u.username && u.username.toLowerCase().includes(keyword)) ||
+                (u.sekolah && u.sekolah.toLowerCase().includes(keyword))
+            );
+        });
+
+        updateUI(currentFilteredData);
+    }
+
+    // --- UPDATE DASHBOARD ELEMENTS ---
+    function updateUI(users) {
+        currentFilteredData = users; // Simpan untuk referensi download CSV
+        const count = users.length || 0;
+
+        // Jika data kosong setelah difilter
+        if (count === 0) {
+            document.getElementById('total-siswa').innerText = "0";
+            document.getElementById('avg-pre').innerText = "0";
+            document.getElementById('avg-post').innerText = "0";
+            document.getElementById('table-body').innerHTML = `<tr><td colspan="6" class="p-10 text-center text-slate-400">Data tidak ditemukan</td></tr>`;
+            return;
+        }
+
+        const avgPre = (users.reduce((a, b) => a + (parseFloat(b.score_pre) || 0), 0) / count).toFixed(1);
+        const avgPost = (users.reduce((a, b) => a + (parseFloat(b.score_post) || 0), 0) / count).toFixed(1);
+
+        document.getElementById('total-siswa').innerText = count;
+        document.getElementById('avg-pre').innerText = avgPre;
+        document.getElementById('avg-post').innerText = avgPost;
+
+        // Hitung Rata-rata Pilar CT
+        let preSums = [0,0,0,0], postSums = [0,0,0,0];
+        users.forEach(u => {
+            (u.ct_pre || [0,0,0,0]).forEach((v, i) => preSums[i] += parseFloat(v) || 0);
+            (u.ct_post || [0,0,0,0]).forEach((v, i) => postSums[i] += parseFloat(v) || 0);
+        });
+
+        const preAvgs = preSums.map(s => (s/count).toFixed(1));
+        const postAvgs = postSums.map(s => (s/count).toFixed(1));
+
+        // Render Small Cards
+        renderCards(preAvgs, 'ct-pre-row', 'text-emerald-600');
+        renderCards(postAvgs, 'ct-post-row', 'text-blue-600');
+
+        // Update Charts
+        charts.mainTrend.data.datasets[0].data = [0, parseFloat(avgPre), parseFloat(avgPost)];
+        charts.mainTrend.update();
+        
+        charts.mainRadar.data.datasets[0].data = preAvgs;
+        charts.mainRadar.data.datasets[1].data = postAvgs;
+        charts.mainRadar.update();
+
+        renderTable(users);
+    }
+
+    function renderCards(data, containerId, colorClass) {
+        document.getElementById(containerId).innerHTML = data.map((val, i) => `
+            <div class="bg-white/50 p-4 rounded-2xl border border-slate-100">
+                <p class="text-[8px] font-black text-slate-400 uppercase mb-1">${PILAR_LABELS[i]}</p>
+                <h4 class="text-xl font-black ${colorClass}">${val}</h4>
+            </div>
+        `).join('');
+    }
+
+    function renderTable(users) {
+        document.getElementById('table-body').innerHTML = users.map(u => {
+            const maxVal = Math.max(...(u.ct_post || [0]));
+            const bestIdx = (u.ct_post || []).indexOf(maxVal);
+            const bestPilar = maxVal > 0 ? PILAR_LABELS[bestIdx] : 'N/A';
+
+            return `
+                <tr class="hover:bg-blue-50/50 transition-colors">
+                    <td class="px-8 py-4 flex items-center gap-3">
+                        <img src="${u.foto_url || 'https://ui-avatars.com/api/?name='+u.nama}" class="w-10 h-10 rounded-xl object-cover">
+                        <div>
+                            <div class="text-slate-800 font-black">${u.nama}</div>
+                            <div class="text-[10px] text-slate-400">${u.username || ''}</div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-4 text-xs font-bold text-slate-500 uppercase">${u.sekolah}</td>
+                    <td class="px-8 py-4 text-center font-bold text-slate-400">${u.score_pre}</td>
+                    <td class="px-8 py-4 text-center font-black text-blue-600">${u.score_post}</td>
+                    <td class="px-8 py-4">
+                        <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter">${bestPilar}</span>
+                    </td>
+                    <td class="px-8 py-4 text-center no-print">
+                        <button onclick='showDetail(${JSON.stringify(u)})' class="bg-slate-100 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+// --- EXPORT CSV LENGKAP & RAPI (FIX FINAL) ---
+function downloadCSV() {
+    if (!currentFilteredData || currentFilteredData.length === 0) {
+        Swal.fire('Data Kosong', 'Tidak ada data yang bisa diekspor.', 'warning');
+        return;
+    }
+
+    // 1. Definisikan Separator (Titik koma lebih aman untuk Excel Indonesia)
+    const sep = ";";
+
+    // 2. Susun Header
+    const headers = [
+        "Username", "Sekolah", 
+        "Skor Pre-Test", "Skor Post-Test", 
+        "Pre: Dekomposisi", "Pre: Pola", "Pre: Abstraksi", "Pre: Algoritma",
+        "Post: Dekomposisi", "Post: Pola", "Post: Abstraksi", "Post: Algoritma",
+        "Pilar Unggulan (Post)"
+    ];
+
+    // 3. Susun Baris Data
+    const rows = currentFilteredData.map(u => {
+        const ctPre = u.ct_pre || [0, 0, 0, 0];
+        const ctPost = u.ct_post || [0, 0, 0, 0];
+        
+        const maxVal = Math.max(...ctPost);
+        const bestIdx = ctPost.indexOf(maxVal);
+        const bestPilar = maxVal > 0 ? PILAR_LABELS[bestIdx] : 'Belum Ada';
+
+        return [
+            u.username || '-',
+            u.sekolah,
+            u.score_pre,
+            u.score_post,
+            ctPre[0], ctPre[1], ctPre[2], ctPre[3],
+            ctPost[0], ctPost[1], ctPost[2], ctPost[3],
+            bestPilar
+        ].map(value => {
+            // Bersihkan data: hapus enter dan bungkus dengan kutip dua
+            let str = String(value).replace(/\r?\n|\r/g, " ").replace(/"/g, '""'); 
+            return `"${str}"`;
+        }).join(sep);
+    });
+
+    // 4. Trik "sep=;": Memberitahu Excel secara paksa pemisah yang digunakan
+    // Ini adalah kunci agar file tidak berantakan saat di-double click
+    const csvContent = `sep=${sep}\n` + headers.join(sep) + "\n" + rows.join("\n");
+
+    // 5. Tambahkan BOM (Byte Order Mark) untuk dukungan karakter UTF-8
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // 6. Proses Download
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID').replace(/\//g, '-');
+    const timeStr = `${now.getHours()}${now.getMinutes()}`;
+
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Laporan_PhiQu_${dateStr}_${timeStr}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Ekspor Berhasil',
+        text: `Data ${currentFilteredData.length} siswa telah siap.`,
+        timer: 2000,
+        showConfirmButton: false
+    });
+}
+
+    // --- MODAL DETAIL ---
+    function showDetail(u) {
+        document.getElementById('det-nama').innerText = u.nama;
+        document.getElementById('det-sekolah').innerText = u.sekolah;
+        document.getElementById('det-foto').src = u.foto_url || 'https://ui-avatars.com/api/?name='+u.nama;
+        document.getElementById('det-hp').innerText = u.hp || '-';
+        document.getElementById('modal-siswa').classList.replace('hidden', 'flex');
+
+        if(charts.detLine) charts.detLine.destroy();
+        charts.detLine = new Chart(document.getElementById('detLineChart'), {
+            type: 'line',
+            data: { 
+                labels: ['Baseline', 'Pre', 'Post'], 
+                datasets: [{ label: 'Skor Fisika', data: [0, parseInt(u.score_pre), parseInt(u.score_post)], borderColor: '#2563eb', tension: 0.4, fill: true, backgroundColor: 'rgba(37, 99, 235, 0.1)' }] 
+            },
+            options: { maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+        });
+
+        if(charts.detRadar) charts.detRadar.destroy();
+        charts.detRadar = new Chart(document.getElementById('detRadarChart'), {
+            type: 'radar',
+            data: { 
+                labels: ['Dekom', 'Pola', 'Abstrak', 'Algo'], 
+                datasets: [
+                    { label: 'Pre-Test', data: u.ct_pre || [0,0,0,0], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+                    { label: 'Post-Test', data: u.ct_post || [0,0,0,0], borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.1)' }
+                ] 
+            },
+            options: { maintainAspectRatio: false, scales: { r: { min: 0, max: 100 } } }
+        });
+    }
+
+    function closeModal() { document.getElementById('modal-siswa').classList.replace('flex', 'hidden'); }
+    function showAbout() { Swal.fire({ title: 'PhiQu-R', text: 'Analisis Computational Thinking v2.0', icon: 'info' }); }
+</script>
+</body>
+</html>
