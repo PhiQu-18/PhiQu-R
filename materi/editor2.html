@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhiQu-R | Code</title>
+    <link rel="icon" type="image/png" href="../foto/1.2.png">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --editor-bg: #1e1e1e;
+            --accent-blue: #4fc3f7;
+            --accent-green: #81c784;
+            --accent-purple: #b388ff;
+            --accent-orange: #ffb74d;
+            --text-main: #d4d4d4;
+            --nav-bg: #1e293b;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px 20px 100px 20px; 
+            background: var(--bg-color); 
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            display: flex; 
+            gap: 25px; 
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) { .container { flex-direction: column; } }
+
+        /* Grafik */
+        .graph-section {
+            flex: 1;
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+        }
+        
+        canvas { 
+            width: 100%; 
+            height: 400px; 
+            background: #0f172a; 
+            border-radius: 12px;
+        }
+
+        /* Editor */
+        .editor-section {
+            flex: 1.5;
+            background: var(--editor-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #3f3f3f;
+        }
+
+        .editor-body {
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            font-size: 12.5px;
+            overflow-y: auto;
+            max-height: 700px;
+        }
+
+        /* Label Pilar CT */
+        .ct-pillar {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+        .decomposition { background: #e57373; color: white; }
+        .pattern { background: #81c784; color: white; }
+        .abstraction { background: #64b5f6; color: white; }
+        .algorithm { background: #ba68c8; color: white; }
+
+        .problem-box {
+            background: rgba(179, 136, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-purple);
+        }
+
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .var-input { 
+            color: var(--accent-blue); 
+            background: rgba(79, 195, 247, 0.1); 
+            border: none; 
+            border-bottom: 1px solid var(--accent-blue);
+            width: 55px; text-align: center; font-family: inherit;
+        }
+
+        .footer-panel {
+            padding: 15px 20px;
+            background: #252526;
+            border-top: 1px solid #333;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .navigation-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--nav-bg); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn { padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .btn-next { background: var(--accent-purple); color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="graph-section">
+        <h3 style="color: #1e293b; margin-top: 0;">Wave Simulation: Reflection & Diffraction</h3>
+        <canvas id="waveCanvas"></canvas>
+        <div style="margin-top: 15px; font-size: 0.85em; color: #475569; border-top: 1px solid #eee; padding-top: 10px;">
+            <strong>Misi:</strong> Amati bagaimana suara kendaraan "membelok" masuk melalui ventilasi jendela yang sempit dan hitung jeda waktu pantulannya.
+        </div>
+    </div>
+
+    <div class="editor-section">
+        <div class="editor-header">
+            <span style="color: #888;">wave_solver.js</span>
+            <span style="color: var(--accent-green);">● Live Preview</span>
+        </div>
+        
+        <div class="editor-body">
+            <div class="problem-box">
+                <strong style="color: var(--accent-purple);">SOAL TANTANGAN:</strong><br>
+                1. Analisis mengapa suara tetap masuk meskipun ada penghalang jendela.<br>
+                2. Jika suhu udara <span style="color: var(--accent-blue);">T</span> &deg;C, hitung kecepatan suara ($v$) dan waktu gema ($t$) jika jarak dinding adalah <span style="color: var(--accent-blue);">s</span> meter.
+            </div>
+
+            <span class="ct-pillar decomposition">Decomposition</span>
+            <span class="comment">// Memecah masalah besar menjadi variabel input utama</span><br>
+            <span class="keyword">let</span> suhu = <input type="number" id="inputTemp" class="var-input" value="">; <span class="comment">// &deg;C</span><br>
+            <span class="keyword">let</span> jarak_gedung = <input type="number" id="inputS" class="var-input" value="">; <span class="comment">// meter</span><br>
+            <span class="keyword">let</span> lebar_ventilasi = <input type="number" id="inputGap" class="var-input" value="">; <span class="comment">// cm</span><br>
+            <br>
+
+            <span class="ct-pillar abstraction">Abstraction</span>
+            <span class="comment">// Fokus pada rumus inti, abaikan gangguan suara lain</span><br>
+            <span class="keyword">const</span> getVelocity = (T) => 331 + (0.6 * T);<br>
+            <span class="keyword">const</span> getEchoTime = (s, v) => (2 * s) / v;<br>
+            <br>
+
+            <span class="ct-pillar pattern">Pattern Recognition</span>
+            <span class="comment">// Mengenali perilaku gelombang: Semakin kecil celah, semakin besar difraksi</span><br>
+            <span class="keyword">let</span> efek_difraksi = lebar_ventilasi < 70 ? <span style="color: #ce9178;">"Membelok Tajam"</span> : <span style="color: #ce9178;">"Lurus"</span>;<br>
+            <br>
+
+            <span class="ct-pillar algorithm">Algorithm</span>
+            <span class="comment">// Langkah berurutan untuk mendapatkan output</span><br>
+            <span class="keyword">let</span> v = getVelocity(suhu);<br>
+            <span class="keyword">let</span> t = getEchoTime(jarak_gedung, v);<br>
+            <br>
+            <span style="color: #dcdcaa;">console</span>.<span style="color: #dcdcaa;">log</span>(<span style="color: #ce9178;">`Waktu jeda gema adalah: ${t.toFixed(3)} detik`</span>);
+        </div>
+
+        <div class="footer-panel">
+            <div style="color: var(--accent-green);">V_BUNYI: <span id="outV">0</span> m/s</div>
+            <div style="color: var(--accent-blue);">T_GEMA: <span id="outT">0</span> s</div>
+            <div style="color: var(--accent-orange);">DIFRAKSI: <span id="outDiff">0</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="navigation-bar">
+        <a href="./editor.html" class="btn btn-back">
+            <span>&larr;</span> Kembali
+        </a>
+
+        <a href="./editor3.html" class="btn btn-next">
+            Lanjut <span>&rarr;</span>
+        </a>
+    </div>
+
+<script>
+    const canvas = document.getElementById('waveCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const inTemp = document.getElementById('inputTemp');
+    const inS = document.getElementById('inputS');
+    const inGap = document.getElementById('inputGap');
+    const outV = document.getElementById('outV');
+    const outT = document.getElementById('outT');
+    const outDiff = document.getElementById('outDiff');
+
+    let time = 0;
+
+    function animate() {
+        // Logic (CT Algorithm)
+        const T = parseFloat(inTemp.value) || 0;
+        const s = parseFloat(inS.value) || 0;
+        const gap = parseFloat(inGap.value) || 1;
+        
+        const v = 331 + (0.6 * T);
+        const t = (2 * s) / v;
+
+        // Display
+        outV.innerText = v.toFixed(1);
+        outT.innerText = t.toFixed(3);
+        outDiff.innerText = gap < 70 ? "Kuat" : "Lemah";
+
+        // Draw Simulation
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Wall
+        ctx.fillStyle = "#475569";
+        const gapSize = gap;
+        ctx.fillRect(100, 0, 15, canvas.height/2 - gapSize/2);
+        ctx.fillRect(100, canvas.height/2 + gapSize/2, 15, canvas.height/2);
+
+        // Reflection Wall
+        ctx.fillStyle = "#ff5f56";
+        ctx.fillRect(canvas.width - 20, 50, 10, canvas.height - 100);
+
+        // Waves
+        ctx.lineWidth = 2;
+        for (let r = 0; r < 500; r += 40) {
+            let radius = (r + time) % 500;
+            ctx.beginPath();
+            if (radius < 100) {
+                ctx.strokeStyle = "rgba(79, 195, 247, 0.6)";
+                ctx.arc(0, canvas.height/2, radius, -Math.PI/2, Math.PI/2);
+            } else {
+                // Diffraction Pattern
+                ctx.strokeStyle = "rgba(179, 136, 255, 0.8)";
+                let spread = Math.min(Math.PI, (80/gap) * Math.PI/2);
+                ctx.arc(110, canvas.height/2, radius - 100, -spread, spread);
+            }
+            ctx.stroke();
+        }
+
+        time += 1.5;
+        requestAnimationFrame(animate);
+    }
+    animate();
+</script>
+</body>
+</html>
