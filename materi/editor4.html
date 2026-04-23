@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhiQu-R | Code</title>
+    <link rel="icon" type="image/png" href="../foto/1.2.png">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --editor-bg: #1e1e1e;
+            --accent-blue: #4fc3f7;
+            --accent-green: #81c784;
+            --accent-purple: #b388ff;
+            --accent-orange: #ffb74d;
+            --text-main: #d4d4d4;
+            --nav-bg: #1e293b;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px 20px 100px 20px; 
+            background: var(--bg-color); 
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            display: flex; 
+            gap: 25px; 
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) { .container { flex-direction: column; } }
+
+        /* Grafik */
+        .graph-section {
+            flex: 1;
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+        }
+        
+        canvas { 
+            width: 100%; 
+            height: 400px; 
+            background: #0f172a; 
+            border-radius: 12px;
+        }
+
+        /* Editor */
+        .editor-section {
+            flex: 1.5;
+            background: var(--editor-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #3f3f3f;
+        }
+
+        .editor-body {
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            font-size: 12.5px;
+            overflow-y: auto;
+        }
+
+        /* Label Pilar CT */
+        .ct-pillar {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+        .decomposition { background: #e57373; color: white; }
+        .pattern { background: #81c784; color: white; }
+        .abstraction { background: #64b5f6; color: white; }
+        .algorithm { background: #ba68c8; color: white; }
+
+        .problem-box {
+            background: rgba(179, 136, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-purple);
+        }
+
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .func { color: #dcdcaa; }
+        .var-input { 
+            color: var(--accent-blue); 
+            background: rgba(79, 195, 247, 0.1); 
+            border: none; 
+            border-bottom: 1px solid var(--accent-blue);
+            width: 55px; text-align: center; font-family: inherit;
+        }
+
+        .footer-panel {
+            padding: 15px 20px;
+            background: #252526;
+            border-top: 1px solid #333;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .navigation-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--nav-bg); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn { padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .btn-back { color: white; border: 1px solid #334155; }
+        .btn-next { background: var(--accent-orange); color: #1e293b; }
+        
+        .btn-audio {
+            background: #334155; color: white; border: 1px solid #475569;
+            padding: 5px 15px; border-radius: 4px; cursor: pointer;
+            font-size: 10px; display: flex; align-items: center; gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="graph-section">
+        <h3 style="color: #1e293b; margin-top: 0;">Beats Frequency Simulator</h3>
+        <canvas id="beatsCanvas"></canvas>
+        <div style="margin-top: 15px; font-size: 0.85em; color: #475569; border-top: 1px solid #eee; padding-top: 10px;">
+            <strong>Analisis Visual:</strong> Gelombang putih menunjukkan hasil interferensi. Area yang menggembung adalah saat suara terdengar keras (layangan).
+        </div>
+    </div>
+
+    <div class="editor-section">
+        <div class="editor-header">
+            <span style="color: #888;">beats_calc.js</span>
+            <span style="color: var(--accent-purple);">● Interference Pattern</span>
+        </div>
+        
+        <div class="editor-body">
+            <div class="problem-box">
+                <strong style="color: var(--accent-purple);">STUDI KASUS:</strong><br>
+                Dua mobil melintas bersamaan dengan frekuensi mesin yang berbeda tipis. <br>
+                Hitung frekuensi pelayangan ($f_L$) yang dihasilkan.
+            </div>
+
+            <span class="ct-pillar decomposition">Decomposition</span>
+            <span class="comment">// Mengurai frekuensi dari masing-masing sumber</span><br>
+            <span class="keyword">let</span> f_mobilA = <input type="number" id="inputFa" class="var-input" value="">; <span class="comment">// Hz</span><br>
+            <span class="keyword">let</span> f_mobilB = <input type="number" id="inputFb" class="var-input" value="">; <span class="comment">// Hz</span><br>
+            <br>
+
+            <span class="ct-pillar pattern">Pattern Recognition</span>
+            <span class="comment">// Pola: Pelayangan adalah selisih mutlak antar frekuensi</span><br>
+            <span class="keyword">let</span> rumus_layangan = <span class="keyword">Math</span>.abs(f_mobilA - f_mobilB);<br>
+            <br>
+
+            <span class="ct-pillar abstraction">Abstraction</span>
+            <span class="comment">// Fokus pada selisih frekuensi, abaikan fase awal gelombang</span><br>
+            <span class="keyword">let</span> f_layangan = rumus_layangan;<br>
+            <br>
+
+            <span class="ct-pillar algorithm">Algorithm</span>
+            <span class="comment">// Output jumlah dentuman pengerasan per detik</span><br>
+            <span style="color: #dcdcaa;">console</span>.<span style="color: #dcdcaa;">log</span>(<span style="color: #ce9178;">`Jumlah layangan: ${f_layangan} kali/detik`</span>);
+        </div>
+
+        <div class="footer-panel">
+            <div style="color: var(--accent-blue);">MOBIL A: <span id="outFa">300</span> Hz</div>
+            <div style="color: var(--accent-green);">MOBIL B: <span id="outFb">302</span> Hz</div>
+            <div style="color: var(--accent-purple);">LAYANGAN: <span id="outFL">2</span> Hz</div>
+            
+            <button id="btnAudio" class="btn-audio">
+                <span id="audioIcon">🔈</span> <span id="audioStatus">AKTIFKAN AUDIO</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="navigation-bar">
+        <a href="./editor3.html" class="btn btn-back">
+            <span>&larr;</span> Kembali
+        </a>
+
+        <a href="./editor5.html" class="btn btn-next">
+            Lanjut <span>&rarr;</span>
+        </a>
+    </div>
+
+<script>
+    const canvas = document.getElementById('beatsCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const inFa = document.getElementById('inputFa');
+    const inFb = document.getElementById('inputFb');
+    const outFa = document.getElementById('outFa');
+    const outFb = document.getElementById('outFb');
+    const outFL = document.getElementById('outFL');
+    
+    const btnAudio = document.getElementById('btnAudio');
+    const audioStatus = document.getElementById('audioStatus');
+    const audioIcon = document.getElementById('audioIcon');
+
+    // Audio Context
+    let audioCtx = null;
+    let oscA = null;
+    let oscB = null;
+    let gainNode = null;
+    let isPlaying = false;
+
+    function initAudio() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        oscA = audioCtx.createOscillator();
+        oscB = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+
+        oscA.type = 'sine';
+        oscB.type = 'sine';
+        
+        gainNode.gain.value = 0.1;
+
+        oscA.connect(gainNode);
+        oscB.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscA.start();
+        oscB.start();
+    }
+
+    btnAudio.addEventListener('click', () => {
+        if (!audioCtx) initAudio();
+        
+        if (!isPlaying) {
+            audioCtx.resume();
+            isPlaying = true;
+            audioStatus.innerText = "AUDIO ON";
+            audioIcon.innerText = "🔊";
+            btnAudio.style.background = "var(--accent-green)";
+        } else {
+            audioCtx.suspend();
+            isPlaying = false;
+            audioStatus.innerText = "AUDIO OFF";
+            audioIcon.innerText = "🔈";
+            btnAudio.style.background = "#334155";
+        }
+    });
+
+    let offset = 0;
+    function animate() {
+        const fa = parseFloat(inFa.value) || 0;
+        const fb = parseFloat(inFb.value) || 0;
+        const fl = Math.abs(fa - fb);
+
+        outFa.innerText = fa;
+        outFb.innerText = fb;
+        outFL.innerText = fl;
+
+        if (isPlaying) {
+            oscA.frequency.setTargetAtTime(fa, audioCtx.currentTime, 0.1);
+            oscB.frequency.setTargetAtTime(fb, audioCtx.currentTime, 0.1);
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw Waveform
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "white";
+        
+        for (let x = 0; x < canvas.width; x++) {
+            // Skala visual frekuensi (disesuaikan agar terlihat di canvas)
+            const scale = 0.05;
+            const y1 = Math.sin((x + offset) * fa * scale);
+            const y2 = Math.sin((x + offset) * fb * scale);
+            
+            // Resultan (Interferensi)
+            const y_res = (y1 + y2) * 50; 
+            
+            const py = canvas.height/2 + y_res;
+            if (x === 0) ctx.moveTo(x, py);
+            else ctx.lineTo(x, py);
+        }
+        ctx.stroke();
+
+        offset += 2;
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+</body>
+</html>
