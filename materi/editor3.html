@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhiQu-R | Code</title>
+    <link rel="icon" type="image/png" href="../foto/1.2.png">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --editor-bg: #1e1e1e;
+            --accent-blue: #4fc3f7;
+            --accent-green: #81c784;
+            --accent-purple: #b388ff;
+            --accent-orange: #ffb74d;
+            --text-main: #d4d4d4;
+            --nav-bg: #1e293b;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px 20px 100px 20px; 
+            background: var(--bg-color); 
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            display: flex; 
+            gap: 25px; 
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) { .container { flex-direction: column; } }
+
+        /* Grafik */
+        .graph-section {
+            flex: 1;
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+        }
+        
+        canvas { 
+            width: 100%; 
+            height: 400px; 
+            background: #0f172a; 
+            border-radius: 12px;
+        }
+
+        /* Editor */
+        .editor-section {
+            flex: 1.5;
+            background: var(--editor-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #3f3f3f;
+        }
+
+        .editor-body {
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            font-size: 12.5px;
+            overflow-y: auto;
+        }
+
+        /* Label Pilar CT */
+        .ct-pillar {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+        .decomposition { background: #e57373; color: white; }
+        .pattern { background: #81c784; color: white; }
+        .abstraction { background: #64b5f6; color: white; }
+        .algorithm { background: #ba68c8; color: white; }
+
+        .problem-box {
+            background: rgba(255, 183, 77, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-orange);
+        }
+
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .func { color: #dcdcaa; }
+        .var-input { 
+            color: var(--accent-blue); 
+            background: rgba(79, 195, 247, 0.1); 
+            border: none; 
+            border-bottom: 1px solid var(--accent-blue);
+            width: 55px; text-align: center; font-family: inherit;
+        }
+
+        .footer-panel {
+            padding: 15px 20px;
+            background: #252526;
+            border-top: 1px solid #333;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .navigation-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--nav-bg); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn { padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .btn-next { background: var(--accent-orange); color: #1e293b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="graph-section">
+        <h3 style="color: #1e293b; margin-top: 0;">Doppler Effect Simulator</h3>
+        <canvas id="dopplerCanvas"></canvas>
+        <div style="margin-top: 15px; font-size: 0.85em; color: #475569; border-top: 1px solid #eee; padding-top: 10px;">
+            <strong>Analisis Visual:</strong> Perhatikan kerapatan gelombang di depan motor (frekuensi tinggi) dibandingkan di belakang motor (frekuensi rendah).
+        </div>
+    </div>
+
+    <div class="editor-section">
+        <div class="editor-header">
+            <span style="color: #888;">doppler_calc.js</span>
+            <span style="color: var(--accent-orange);">● Moving Source</span>
+        </div>
+        
+        <div class="editor-body">
+            <div class="problem-box">
+                <strong style="color: var(--accent-orange);">STUDI KASUS:</strong><br>
+                Motor dengan knalpot brong bergerak melintas. <br>
+                Hitung perbedaan frekuensi ($f_p$) saat motor <b>mendekat</b> vs <b>menjauh</b>.
+            </div>
+
+            <span class="ct-pillar decomposition">Decomposition</span>
+            <span class="comment">// Memisahkan input tetap dan variabel kecepatan</span><br>
+            <span class="keyword">let</span> f_sumber = <input type="number" id="inputFs" class="var-input" value="400">; <span class="comment">// Hz</span><br>
+            <span class="keyword">let</span> v_motor = <input type="number" id="inputVs" class="var-input" value="20">; <span class="comment">// m/s</span><br>
+            <span class="keyword">let</span> v_bunyi = <span class="var-readonly">340</span>; <span class="comment">// m/s (udara)</span><br>
+            <br>
+
+            <span class="ct-pillar abstraction">Abstraction</span>
+            <span class="comment">// Mengabaikan kecepatan angin dan pendengar (v_p = 0)</span><br>
+            <span class="keyword">const</span> <span class="func">dopplerCalc</span> = (fs, v, vs, isApproaching) => {<br>
+            &nbsp;&nbsp;<span class="keyword">return</span> isApproaching ? fs * (v / (v - vs)) : fs * (v / (v + vs));<br>
+            };<br>
+            <br>
+
+            <span class="ct-pillar pattern">Pattern Recognition</span>
+            <span class="comment">// Pola: Mendekat (vs negatif di penyebut), Menjauh (vs positif)</span><br>
+            <span class="keyword">let</span> f_mendekat = dopplerCalc(f_sumber, v_bunyi, v_motor, <span class="keyword">true</span>);<br>
+            <span class="keyword">let</span> f_menjauh = dopplerCalc(f_sumber, v_bunyi, v_motor, <span class="keyword">false</span>);<br>
+            <br>
+
+            <span class="ct-pillar algorithm">Algorithm</span>
+            <span class="comment">// Hitung selisih frekuensi untuk melihat perubahan suara</span><br>
+            <span class="keyword">let</span> delta_f = f_mendekat - f_menjauh;<br>
+            <br>
+            <span style="color: #dcdcaa;">console</span>.<span style="color: #dcdcaa;">log</span>(<span style="color: #ce9178;">`Perubahan Frekuensi: ${delta_f.toFixed(2)} Hz`</span>);
+        </div>
+
+        <div class="footer-panel">
+            <div style="color: var(--accent-green);">MENDEKAT: <span id="outNear">0</span> Hz</div>
+            <div style="color: var(--accent-purple);">MENJAUH: <span id="outFar">0</span> Hz</div>
+            <div style="color: var(--accent-orange);">DELTA: <span id="outDelta">0</span> Hz</div>
+        </div>
+    </div>
+
+    <button id="btnAudio" style="background: #334155; color: white; border: 1px solid #475569; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 10px; display: flex; align-items: center; gap: 8px;">
+        <span id="audioIcon">🔈</span> <span id="audioStatus">AKTIFKAN SUARA</span>
+    </button>
+</div>
+
+<div class="navigation-bar">
+        <a href="./editor2.html" class="btn btn-back">
+            <span>&larr;</span> Kembali
+        </a>
+
+        <a href="./editor4.html" class="btn btn-next">
+            Lanjut <span>&rarr;</span>
+        </a>
+    </div>
+
+<script>
+    const canvas = document.getElementById('dopplerCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const inFs = document.getElementById('inputFs');
+    const inVs = document.getElementById('inputVs');
+    const outNear = document.getElementById('outNear');
+    const outFar = document.getElementById('outFar');
+    const outDelta = document.getElementById('outDelta');
+
+    // --- LOGIKA AUDIO ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let oscillator = null;
+    let gainNode = null;
+    let isAudioStarted = false;
+
+    function startEngine() {
+        if (isAudioStarted) return;
+        
+        oscillator = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        
+        // 'sawtooth' memberikan tekstur suara kasar seperti mesin/knalpot
+        oscillator.type = 'sawtooth'; 
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        oscillator.start();
+        isAudioStarted = true;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    // --- LOGIKA VISUAL ---
+    let motorX = -50; 
+    let time = 0;
+    let rings = [];
+
+    function animate() {
+        const fs = parseFloat(inFs.value) || 0;
+        const vs_val = parseFloat(inVs.value) || 0;
+        const v = 340;
+        const listenerX = canvas.width / 2;
+
+        // CT Logic: Menghitung Frekuensi Doppler
+        const near = fs * (v / (v - vs_val));
+        const far = fs * (v / (v + vs_val));
+        
+        // Tentukan apakah motor sedang mendekati rumah (Listener)
+        const isApproaching = motorX < listenerX;
+        const currentFreq = isApproaching ? near : far;
+
+        // Update UI
+        outNear.innerText = Math.round(near);
+        outFar.innerText = Math.round(far);
+        outDelta.innerText = Math.round(near - far);
+
+        // Update Suara Berdasarkan Posisi
+        if (isAudioStarted) {
+            // Mengubah frekuensi secara halus (smoothing)
+            oscillator.frequency.setTargetAtTime(currentFreq, audioCtx.currentTime, 0.05);
+            
+            // Mengatur volume (gain) - lebih keras saat mendekat
+            const distance = Math.abs(motorX - listenerX);
+            const volume = Math.max(0, 0.2 - (distance / 2000)); 
+            gainNode.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.1);
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Update Posisi Motor (Looping)
+        motorX += vs_val * 0.15;
+        if (motorX > canvas.width + 50) motorX = -50;
+
+        // Visual Gelombang
+        if (Math.floor(time) % 10 === 0) {
+            rings.push({x: motorX, r: 0});
+        }
+
+        ctx.lineWidth = 2;
+        rings.forEach((ring, index) => {
+            ring.r += 3;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(79, 195, 247, ${1 - ring.r/400})`;
+            ctx.arc(ring.x, canvas.height/2, ring.r, 0, Math.PI * 2);
+            ctx.stroke();
+            if (ring.r > 400) rings.splice(index, 1);
+        });
+
+        // Draw Motor & House
+        ctx.font = "30px Arial";
+        ctx.fillText("🏍️", motorX - 15, canvas.height/2 + 10);
+        ctx.font = "40px Arial";
+        ctx.fillText("🏠", listenerX - 20, canvas.height - 50);
+
+        time++;
+        requestAnimationFrame(animate);
+    }
+
+    // Ambil elemen tombol baru
+const btnAudio = document.getElementById('btnAudio');
+const audioStatus = document.getElementById('audioStatus');
+const audioIcon = document.getElementById('audioIcon');
+
+// Fungsi untuk menyalakan/mematikan suara
+btnAudio.addEventListener('click', () => {
+    if (!isAudioStarted) {
+        startEngine();
+        audioStatus.innerText = "SUARA ON";
+        audioIcon.innerText = "🔊";
+        btnAudio.style.background = "var(--accent-green)";
+        btnAudio.style.color = "#1e293b";
+    } else {
+        // Toggle Mute dengan Gain
+        if (gainNode.gain.value > 0) {
+            gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+            audioStatus.innerText = "MUTE";
+            audioIcon.innerText = "🔈";
+            btnAudio.style.background = "#334155";
+            btnAudio.style.color = "white";
+        } else {
+            gainNode.gain.setTargetAtTime(0.1, audioCtx.currentTime, 0.1);
+            audioStatus.innerText = "SUARA ON";
+            audioIcon.innerText = "🔊";
+            btnAudio.style.background = "var(--accent-green)";
+            btnAudio.style.color = "#1e293b";
+        }
+    }
+});
+
+// Tetap pertahankan listener btn-next jika ingin audio otomatis nyala saat pindah halaman
+document.querySelector('.btn-next').addEventListener('click', (e) => {
+    // startEngine() di sini opsional jika sudah ada tombol khusus
+});
+
+    animate();
+</script>
+</body>
+</html>
