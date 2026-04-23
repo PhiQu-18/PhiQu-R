@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Code Lab: Final Edition</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --editor-bg: #1e1e1e;
+            --accent-blue: #4fc3f7;
+            --accent-green: #81c784;
+            --text-main: #d4d4d4;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: var(--bg-color); 
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Layout Desktop: Side-by-Side */
+        .container { 
+            max-width: 1300px; 
+            margin: auto; 
+            display: flex; 
+            flex-direction: row;
+            gap: 25px; 
+            align-items: stretch;
+        }
+
+        @media (max-width: 1000px) {
+            .container { flex-direction: column; }
+        }
+
+        /* Seksi Grafik */
+        .graph-section {
+            flex: 1;
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+        }
+        
+        canvas { 
+            width: 100%; 
+            height: 400px; 
+            background: #f8fafc; 
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .graph-section h3 { color: #1e293b; margin-top: 0; text-align: center; }
+
+        /* Seksi Editor */
+        .editor-section {
+            flex: 1.5;
+            background: var(--editor-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #3f3f3f;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+
+        .editor-body {
+            padding: 25px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .problem-statement {
+            background: #2a2d2e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-blue);
+            color: #9cdcfe;
+        }
+
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .var-input { 
+            color: var(--accent-blue); 
+            background: rgba(79, 195, 247, 0.1); 
+            border: none; 
+            border-bottom: 2px solid var(--accent-blue);
+            font-weight: bold;
+            width: 75px;
+            text-align: center;
+            outline: none;
+        }
+        .var-readonly { color: var(--accent-green); font-weight: bold; }
+
+        .footer-panel {
+            margin-top: auto;
+            padding: 15px 25px;
+            background: #252526;
+            border-top: 1px solid #333;
+            font-size: 12px;
+        }
+
+        /* --- STYLES NAVIGASI BAWAH --- */
+        .navigation-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+            border-top: 1px solid #334155;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid #475569;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border-color: #94a3b8;
+        }
+
+        .btn-next {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .btn-next:hover {
+            background: #81d4fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="graph-section">
+        <h3>Wave Analysis Monitor</h3>
+        <canvas id="waveCanvas"></canvas>
+        <p style="color: #64748b; font-size: 0.85em; text-align: center; margin-top: 15px;">
+            <strong>Analisis:</strong> Gelombang Longitudinal (Bunyi) direpresentasikan dalam model Sinusoidal.<br>
+            Puncak = Kerapatan Partikel | Lembah = Kerenggangan Partikel.
+        </p>
+    </div>
+
+    <div class="editor-section">
+        <div class="editor-header">
+            <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+            <span style="margin-left: 10px; color: #888; font-size: 12px;">analisis_gelombang.js</span>
+        </div>
+        
+        <div class="editor-body">
+            <div class="problem-statement">
+                <strong>[PROBLEM]</strong> Bunyi knalpot merambat (v=340m/s, f=100Hz).<br>
+                Identifikasi tipe gelombang dan hitung panjangnya (&lambda;).
+            </div>
+
+            <div class="comment">/** <br>
+                &nbsp;* LANGKAH 1: DEKOMPOSISI (Decomposition)<br>
+                &nbsp;* Memecah masalah besar menjadi variabel-variabel data input.<br>
+                &nbsp;*/</div>
+            <span class="keyword">let</span> v_udara = <input type="number" id="inputV" class="var-input" value="">; <span class="comment">// m/s</span><br>
+            <span class="keyword">let</span> f_mesin = <input type="number" id="inputF" class="var-input" value="">; <span class="comment">// Hz</span><br>
+            <br>
+
+            <div class="comment">/** <br>
+                &nbsp;* LANGKAH 2: PENGENALAN POLA (Pattern Recognition)<br>
+                &nbsp;* Bunyi adalah longitudinal karena arah rambat sejajar arah getar.<br>
+                &nbsp;*/</div>
+            <span class="keyword">const</span> waveType = <span style="color: #ce9178;">"Longitudinal"</span>;<br>
+            <br>
+
+            <div class="comment">/** <br>
+                &nbsp;* LANGKAH 3: ABSTRAKSI (Abstraction)<br>
+                &nbsp;* Menghilangkan detail knalpot & fokus pada rumus: &lambda; = v / f.<br>
+                &nbsp;*/</div>
+            <span class="keyword">const</span> hitungLambda = (v, f) => v / f;<br>
+            <br>
+
+            <div class="comment">/** <br>
+                &nbsp;* LANGKAH 4: ALGORITMA (Algorithm Design)<br>
+                &nbsp;* Urutan langkah perhitungan otomatis dan visualisasi.<br>
+                &nbsp;*/</div>
+            <span class="keyword">let</span> lambda = <span class="var-readonly" id="displayLambda">3.40</span>; <span class="comment">// meter</span><br>
+            <br>
+            <span style="color: #dcdcaa;">console</span>.<span style="color: #dcdcaa;">log</span>(<span style="color: #ce9178;">`Hasil Analisis: ${lambda} meter`</span>);
+        </div>
+
+        <div class="footer-panel">
+            <span style="color: var(--accent-blue);">●</span> <strong>System Log:</strong> Berhasil menghitung &lambda; untuk gelombang <span id="logType">Longitudinal</span>.
+        </div>
+
+        <div class="navigation-bar">
+        <a href="./cover.html" class="btn btn-back">
+            <span>&larr;</span> Kembali
+        </a>
+
+        <a href="./editor2.html" class="btn btn-next">
+            Lanjut <span>&rarr;</span>
+        </a>
+    </div>
+    </div>
+</div>
+
+
+<script>
+    const canvas = document.getElementById('waveCanvas');
+    const ctx = canvas.getContext('2d');
+    const inputV = document.getElementById('inputV');
+    const inputF = document.getElementById('inputF');
+    const displayLambda = document.getElementById('displayLambda');
+    const statusLambda = document.getElementById('statusLambda');
+
+    let offset = 0;
+
+    function animate() {
+        const v = parseFloat(inputV.value) || 0;
+        const f = parseFloat(inputF.value) || 1;
+        const lambda = v / f;
+
+        displayLambda.innerText = lambda.toFixed(2);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Grid Lab (Abstraksi Grid)
+        ctx.beginPath();
+        ctx.strokeStyle = '#e2e8f0';
+        for(let i=0; i<canvas.width; i+=40) {
+            ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height);
+            ctx.moveTo(0, i); ctx.lineTo(canvas.width, i);
+        }
+        ctx.stroke();
+
+        // Menggambar representasi gelombang
+        ctx.beginPath();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#0ea5e9';
+        ctx.lineJoin = 'round';
+
+        for (let x = 0; x < canvas.width; x++) {
+            // Skala visual agar lambda 3.4m terlihat proporsional di canvas
+            const k = (2 * Math.PI) / (lambda * 50); 
+            const y = canvas.height/2 + Math.sin((x + offset) * k) * 40;
+            
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Kecepatan gerak visual sesuai cepat rambat
+        offset -= (v / 100); 
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+</body>
+</html>
