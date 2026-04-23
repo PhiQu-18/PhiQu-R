@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhiQu-R | Code</title>
+    <link rel="icon" type="image/png" href="../foto/1.2.png">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --editor-bg: #1e1e1e;
+            --accent-blue: #4fc3f7;
+            --accent-green: #81c784;
+            --accent-purple: #b388ff;
+            --accent-orange: #ffb74d;
+            --text-main: #d4d4d4;
+            --nav-bg: #1e293b;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px 20px 150px 20px; 
+            background: var(--bg-color); 
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            display: flex; 
+            gap: 25px; 
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) { .container { flex-direction: column; } }
+
+        /* Grafik & Visual */
+        .graph-section {
+            flex: 1;
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            text-align: center;
+        }
+        
+        .db-meter {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 15px solid #e2e8f0;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        #dbValue { font-size: 2.5rem; font-weight: bold; color: #1e293b; }
+        #safetyStatus { font-weight: bold; margin-top: 10px; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; }
+
+        /* Editor */
+        .editor-section {
+            flex: 1.5;
+            background: var(--editor-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #2d2d2d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #3f3f3f;
+        }
+
+        .editor-body {
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            font-size: 12.5px;
+            overflow-y: auto;
+        }
+
+        /* CT Pillars */
+        .ct-pillar {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+        .decomposition { background: #e57373; color: white; }
+        .abstraction { background: #64b5f6; color: white; }
+
+        .problem-box {
+            background: rgba(79, 195, 247, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .var-input { 
+            color: var(--accent-blue); 
+            background: rgba(79, 195, 247, 0.1); 
+            border: none; 
+            border-bottom: 1px solid var(--accent-blue);
+            width: 80px; text-align: center; font-family: inherit;
+        }
+
+        /* Footer & Image Section */
+        .image-container {
+            margin-top: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .navigation-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--nav-bg); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+        }
+        .btn { padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .btn-back { color: white; border: 1px solid #334155; }
+        .btn-next { background: var(--accent-orange); color: #1e293b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="graph-section">
+        <h3 style="color: #1e293b; margin-top: 0;">Decibel Meter & Health Check</h3>
+        <div class="db-meter" id="meterFrame">
+            <span id="dbValue">70</span>
+            <span style="color: #64748b; font-size: 0.8rem;">dB</span>
+        </div>
+        <div id="safetyStatus">LOADING...</div>
+        
+        <div class="image-container">
+            <p style="color: #475569; font-size: 0.8rem; margin-bottom: 10px;">Referensi Skala Kebisingan:</p>
+            <img src="../foto/1.avif" alt="Tabel Referensi Desibel" onerror="this.alt='Silahkan masukkan link gambar referensi desibel di sini (misal: diagram perbandingan suara)'">
+        </div>
+    </div>
+
+    <div class="editor-section">
+        <div class="editor-header">
+            <span style="color: #888;">ti_analyzer.js</span>
+            <button onclick="speakStatus()" style="background: var(--accent-orange); border:none; border-radius:4px; font-size:10px; cursor:pointer; padding: 2px 8px;">🔊 BACA HASIL</button>
+        </div>
+        
+        <div class="editor-body">
+            <div class="problem-box">
+                <strong style="color: var(--accent-blue);">STUDI KASUS:</strong><br>
+                Hitung Taraf Intensitas ($TI$) suara truk jika diketahui:<br>
+                $I_0 = 10^{-12} \, W/m^2$ (Ambang) <br>
+                $I = 10^{-5} \, W/m^2$ (Truk)
+            </div>
+
+            <span class="ct-pillar decomposition">Decomposition</span><br>
+            <span class="comment">// 1. Tentukan ambang dengar & nilai input</span><br>
+            <span class="keyword">const</span> I_ambang = 1e-12;<br>
+            <span class="keyword">let</span> I_suara = <input type="text" id="inputI" class="var-input" value="1e-5">;<br>
+            <br>
+
+            <span class="ct-pillar abstraction">Abstraction</span><br>
+            <span class="comment">// 2. Rumus: TI = 10 * log10(I / I_ambang)</span><br>
+            <span class="comment">// Kita mengonversi skala linear ke logaritmik agar lebih mudah dipahami</span><br>
+            <span class="keyword">const</span> hasil_ti = 10 * <span class="keyword">Math</span>.log10(parseFloat(I_suara) / I_ambang);<br>
+            <br>
+            <span class="ct-pillar algorithm">Algorithm</span><br>
+            <span class="comment">// Suara diatur berdasarkan nilai TI:</span><br>
+            <span class="comment">// - Desibel rendah (0-40): Suara lembut (Gain rendah)</span><br>
+            <span class="comment">// - Desibel tinggi (80-120): Suara menggelegar (Gain tinggi)</span><br>
+            <span class="keyword">let</span> volume_suara = taraf_intensitas / 100;<br>
+            <span class="func">aturVolume</span>(volume_suara);
+
+            <span class="keyword">let</span> status_aman = (hasil_ti <= 85) ? <span style="color: #ce9178;">"Aman"</span> : <span style="color: #ce9178;">"Bahaya"</span>;<br>
+            <span style="color: #dcdcaa;">console</span>.<span style="color: #dcdcaa;">log</span>(<span style="color: #ce9178;">`Hasil: hasil_ti (dB) status_aman)`</span>;
+        </div>
+
+        <div style="padding: 15px; background: #252526; border-top: 1px solid #333; font-size: 11px;">
+            <div style="color: var(--accent-purple);">OUTPUT: <span id="outTI">70</span> dB | <span id="outHealth">AMAN</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="navigation-bar">
+    <a href="./editor4.html" class="btn btn-back">&larr; Kembali</a>
+    <a href="./editor6.html" class="btn btn-next">Lanjutkan &rarr;</a>
+</div>
+
+<script>
+    // Inisialisasi Audio Context
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let oscillator = null;
+    let gainNode = null;
+    let isAudioStarted = false;
+
+    const inI = document.getElementById('inputI');
+    const outTI = document.getElementById('outTI');
+    const outHealth = document.getElementById('outHealth');
+    const dbValueDisplay = document.getElementById('dbValue');
+    const meterFrame = document.getElementById('meterFrame');
+    const safetyStatus = document.getElementById('safetyStatus');
+
+    function startSound() {
+        if (isAudioStarted) return;
+        
+        oscillator = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        
+        oscillator.type = 'sine'; // Suara murni
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        oscillator.start();
+        isAudioStarted = true;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function updateVisuals(ti_rounded) {
+        // Logika Keamanan & Warna (Pattern Recognition)
+        if (ti_rounded <= 75) {
+            meterFrame.style.borderColor = "#81c784";
+            safetyStatus.innerText = "KONDISI: SANGAT AMAN";
+            safetyStatus.style.backgroundColor = "#dcfce7";
+            safetyStatus.style.color = "#166534";
+            outHealth.innerText = "AMAN";
+        } else if (ti_rounded <= 85) {
+            meterFrame.style.borderColor = "#ffb74d";
+            safetyStatus.innerText = "KONDISI: WASPADA";
+            safetyStatus.style.backgroundColor = "#fef3c7";
+            safetyStatus.style.color = "#92400e";
+            outHealth.innerText = "BATAS AMAN";
+        } else {
+            meterFrame.style.borderColor = "#e57373";
+            safetyStatus.innerText = "KONDISI: BAHAYA";
+            safetyStatus.style.backgroundColor = "#fee2e2";
+            safetyStatus.style.color = "#991b1b";
+            outHealth.innerText = "BAHAYA";
+        }
+    }
+
+    function updateSim() {
+        const I = parseFloat(inI.value) || 1e-12;
+        const I0 = 1e-12;
+        
+        // Rumus Taraf Intensitas (TI)
+        const ti = 10 * Math.log10(I / I0);
+        const ti_rounded = Math.round(ti * 100) / 100;
+
+        // --- LOGIKA SUARA SESUAI DESIBEL ---
+        if (isAudioStarted) {
+            // 1. Amplitudo (Volume): Semakin besar dB, semakin keras
+            // Kita gunakan rumus eksponensial agar volume terasa alami
+            const volume = Math.min(ti / 120, 1.0); 
+            gainNode.gain.setTargetAtTime(volume * 0.5, audioCtx.currentTime, 0.1);
+
+            // 2. Frekuensi: Semakin bising, frekuensi dibuat sedikit lebih tinggi (opsional)
+            const pitch = 200 + (ti * 2); 
+            oscillator.frequency.setTargetAtTime(pitch, audioCtx.currentTime, 0.1);
+        }
+
+        // Update UI & Meter
+        outTI.innerText = ti_rounded;
+        dbValueDisplay.innerText = Math.round(ti_rounded);
+        
+        // Visual Feedback
+        updateVisuals(ti_rounded);
+    }
+
+    // Fungsi Suara (Text-to-Speech)
+    function speakStatus() {
+        const text = `Taraf intensitas suara adalah ${dbValueDisplay.innerText} desibel. Kondisi ini ${safetyStatus.innerText.split(': ')[1]}.`;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Tambahkan pemicu suara saat input berubah pertama kali
+    inI.addEventListener('mousedown', startSound);
+    inI.addEventListener('input', updateSim);
+
+    updateSim();
+</script>
+</body>
+</html>
