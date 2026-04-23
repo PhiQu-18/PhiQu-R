@@ -367,27 +367,56 @@
         }
 
         async function submitPostTest() {
-            Swal.fire({ title: 'Menyimpan Hasil...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            const user = JSON.parse(localStorage.getItem('userPhiQu'));
-            const payload = {
-                action: 'submit_posttest',
-                username: user ? user.username : 'Guest',
-                nilai_fisika: report.total_score,
-                dekomposisi: Math.round((report.dekomposisi/5)*100),
-                pola: Math.round((report.pola/5)*100),
-                abstraksi: Math.round((report.abstraksi/5)*100),
-                algoritma: Math.round((report.algoritma/5)*100),
-                percobaan: localStorage.getItem('phiQu_post_attempts')
-            };
+    Swal.fire({ 
+        title: 'Menyimpan Hasil...', 
+        allowOutsideClick: false, 
+        didOpen: () => Swal.showLoading() 
+    });
 
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Hasil evaluasi telah disimpan.' })
-                .then(() => window.location.href = "profil.html");
-            } catch (e) {
+    const user = JSON.parse(localStorage.getItem('userPhiQu'));
+    const payload = {
+        action: 'submit_posttest',
+        username: user ? user.username : 'Guest',
+        nilai_fisika: report.total_score,
+        dekomposisi: Math.round((report.dekomposisi/5)*100),
+        pola: Math.round((report.pola/5)*100),
+        abstraksi: Math.round((report.abstraksi/5)*100),
+        algoritma: Math.round((report.algoritma/5)*100),
+        percobaan: localStorage.getItem('phiQu_post_attempts')
+    };
+
+    try {
+        // Proses simpan data ke Google Sheets
+        await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+        
+        // POP-UP ANGKET SETELAH BERHASIL SIMPAN
+        Swal.fire({
+            icon: 'success',
+            title: 'Evaluasi Selesai!',
+            text: 'Data nilaimu telah tersimpan. Mohon bantu kami dengan memberikan penilaian tentang media ini.',
+            showCancelButton: true,
+            confirmButtonText: 'Oke, Isi Angket',
+            cancelButtonText: 'Tidak Dulu',
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#64748b',
+            reverseButtons: true, // Menempatkan tombol Oke di kanan
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ke halaman angket
+                window.location.href = "angket.html";
+            } else {
+                // Ke profil
                 window.location.href = "profil.html";
             }
-        }
+        });
+
+    } catch (e) {
+        // Jika terjadi error koneksi, tetap tawarkan angket atau lempar ke profil
+        console.error("Error submitting data:", e);
+        window.location.href = "profil.html";
+    }
+}
     </script>
 </body>
 </html>
