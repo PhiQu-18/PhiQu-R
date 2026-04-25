@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | PhiQu-R Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div>
+                <h1 class="text-3xl font-black italic">DATABASE <span class="text-blue-500">PHIQUE-R</span></h1>
+                <p class="text-slate-400 text-sm">Monitoring Data Praktikalitas Real-time</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="glass p-4 rounded-2xl text-center min-w-[120px]">
+                    <p class="text-[10px] uppercase font-bold text-slate-500">Total Responden</p>
+                    <p id="total-count" class="text-2xl font-black text-blue-400">0</p>
+                </div>
+                <button onclick="loadData()" class="glass p-4 rounded-2xl hover:bg-blue-600 transition-all">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <i class="fas fa-chalkboard-teacher text-green-400 text-xl"></i>
+                <h2 class="text-xl font-bold">Data Respon Guru (11 Pernyataan)</h2>
+            </div>
+            <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-white/5 border-b border-white/10 text-[10px] uppercase tracking-wider">
+                            <tr id="header-guru">
+                                </tr>
+                        </thead>
+                        <tbody id="body-guru" class="divide-y divide-white/5">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex items-center gap-3 mb-4">
+                <i class="fas fa-user-graduate text-blue-400 text-xl"></i>
+                <h2 class="text-xl font-bold">Data Respon Siswa (7 Pernyataan)</h2>
+            </div>
+            <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-white/5 border-b border-white/10 text-[10px] uppercase tracking-wider">
+                            <tr id="header-siswa">
+                                </tr>
+                        </thead>
+                        <tbody id="body-siswa" class="divide-y divide-white/5">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxalEqiND6buhKtV8YPTvtV0e2no7S1Mv6L6S-S_q29jsReeepI9nDNJBeJDjgBFE0jBA/exec";
+
+    async function loadData() {
+        const syncBtn = document.querySelector('button i');
+        syncBtn.classList.add('fa-spin'); // Animasi putar saat loading
+        
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            document.getElementById('total-count').innerText = data.summary.totalResponden;
+
+            renderTable('guru', data.guru, 11);
+            renderTable('siswa', data.siswa, 7);
+        } catch (error) {
+            console.error("Gagal memuat data:", error);
+            alert("Gagal mengambil data dari database. Pastikan Web App sudah di-deploy sebagai 'Anyone'.");
+        } finally {
+            syncBtn.classList.remove('fa-spin');
+        }
+    }
+
+    function renderTable(type, items, pCount) {
+        const headerRow = document.getElementById(`header-${type}`);
+        const bodyRow = document.getElementById(`body-${type}`);
+        
+        // Sesuaikan nama header ini dengan baris 1 di Google Sheets kamu
+        let headers = ['Nama', 'Sekolah', 'WhatsApp'];
+        for(let i=1; i<=pCount; i++) headers.push(`P${i}`);
+        headers.push('Total', '%', 'Kategori', 'Catatan');
+
+        headerRow.innerHTML = headers.map(h => `<th class="px-6 py-4 font-bold text-slate-300 whitespace-nowrap">${h}</th>`).join('');
+
+        if (!items || items.length === 0) {
+            bodyRow.innerHTML = `<tr><td colspan="${headers.length}" class="px-6 py-10 text-center text-slate-500 italic">Belum ada data di sheet Data${type === 'guru' ? 'Guru' : 'Siswa'}</td></tr>`;
+            return;
+        }
+
+        bodyRow.innerHTML = items.map(item => `
+            <tr class="hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                <td class="px-6 py-4 font-bold text-white whitespace-nowrap">${item.Nama || '-'}</td>
+                <td class="px-6 py-4 text-slate-400 whitespace-nowrap">${item.Sekolah || '-'}</td>
+                <td class="px-6 py-4 text-slate-400 whitespace-nowrap">${item.WhatsApp || '-'}</td>
+                ${Array.from({length: pCount}, (_, i) => {
+                    const val = item['P'+(i+1)] || '0';
+                    return `<td class="px-6 py-4 text-center font-bold ${val >= 4 ? 'text-blue-400' : 'text-slate-500'}">${val}</td>`;
+                }).join('')}
+                <td class="px-6 py-4 font-black text-white">${item['Total Skor'] || '0'}</td>
+                <td class="px-6 py-4 text-green-400 font-bold">${item.Persentase || '0%'}</td>
+                <td class="px-6 py-4"><span class="px-2 py-1 bg-blue-500/10 text-blue-400 rounded text-[10px] font-bold">${item.Kategori || '-'}</span></td>
+                <td class="px-6 py-4 text-slate-400 text-xs italic max-w-xs truncate" title="${item.Catatan || ''}">${item.Catatan || '-'}</td>
+            </tr>
+        `).join('');
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>

@@ -69,18 +69,20 @@ body.auth-active::after { content: ''; position: fixed; top: 0; left: 0; width: 
 
     <div id="dashboard-content" class="hidden opacity-0 transition-opacity duration-700">
         <header class="p-6 md:p-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="flex items-center gap-4">
-                <img src="./foto/1.2.png" alt="Logo" class="w-16 h-16 object-contain">
-                <div>
-                    <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dashboard<span class="text-blue-600">Qu</span></h1>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PhiQu-R | By. PhiQu</p>
-                </div>
-            </div>
-            <div class="text-right hidden md:block no-print">
-                <p class="text-sm font-black text-slate-700" id="current-date"></p>
-                <p class="text-[10px] text-green-500 font-bold uppercase">● Database Aktif</p>
-            </div>
-        </header>
+    <div class="flex items-center gap-4">
+        <a href="zdashboard.html" class="hover:opacity-80 transition-opacity">
+            <img src="./foto/1.2.png" alt="Logo" class="w-16 h-16 object-contain">
+        </a>
+        <div>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dashboard<span class="text-blue-600">Qu</span></h1>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PhiQu-R | By. PhiQu</p>
+        </div>
+    </div>
+    <div class="text-right hidden md:block no-print">
+        <p class="text-sm font-black text-slate-700" id="current-date"></p>
+        <p class="text-[10px] text-green-500 font-bold uppercase">● Database Aktif</p>
+    </div>
+</header>
 
         <main class="max-w-7xl mx-auto px-4 md:px-10">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
