@@ -152,7 +152,7 @@ body.auth-active::after { content: ''; position: fixed; top: 0; left: 0; width: 
     </div>
 
     <nav class="nav-dock no-print hidden" id="nav-dock">
-        <div class="nav-item" onclick="window.open('https://wa.me/6283182514910')"><i class="fa-brands fa-whatsapp"></i><span>Kontak</span></div>
+        <div class="nav-item" onclick="window.open('https://wa.me/6283157592264')"><i class="fa-brands fa-whatsapp"></i><span>Kontak</span></div>
         <div class="nav-item" onclick="showAbout()"><i class="fa-solid fa-circle-question"></i><span>Info</span></div>
         <div class="nav-item nav-refresh" onclick="fetchAllData()"><i class="fa-solid fa-rotate"></i><span>Sync</span></div>
         <div class="nav-item" onclick="downloadCSV()"><i class="fa-solid fa-file-csv"></i><span>Ekspor</span></div>
@@ -198,7 +198,7 @@ body.auth-active::after { content: ''; position: fixed; top: 0; left: 0; width: 
     // --- AUTHENTICATION ---
     function checkAuth() {
         const pass = document.getElementById('admin-pass').value;
-        if(pass === "a") {
+        if(pass === "Man 2 Sijunjung Plus Keterampilan") {
             document.body.classList.remove('auth-active');
             document.getElementById('auth-overlay').style.opacity = '0';
             setTimeout(() => document.getElementById('auth-overlay').remove(), 300);
@@ -471,7 +471,36 @@ function downloadCSV() {
     }
 
     function closeModal() { document.getElementById('modal-siswa').classList.replace('flex', 'hidden'); }
-    function showAbout() { Swal.fire({ title: 'PhiQu-R', text: 'Analisis Computational Thinking v2.0', icon: 'info' }); }
+    function showAbout() {
+    Swal.fire({
+        title: '<span class="text-2xl font-black tracking-tight">PhiQu<span class="text-blue-600">-R</span></span>',
+        html: `
+            <div class="flex flex-col items-center gap-6">
+                <div class="flex flex-row items-center justify-center gap-6 w-full">
+                    <img src="./foto/1.2.png" alt="Logo PhiQu" class="w-20 h-20 md:w-24 md:h-24 object-contain shadow-sm rounded-lg">
+                    <img src="./foto/z1.jpg" alt="MAN 2 Sijunjung" class="w-20 h-20 md:w-24 md:h-24 object-contain shadow-sm rounded-lg">
+                </div>
+
+                <div class="text-sm text-slate-600 leading-relaxed text-center px-2">
+                    <p class="font-bold text-slate-800 border-b border-slate-100 pb-3 mb-3">
+                        "Pengembangan Media Interaktif Fisika Terintegrasi Coding Terhadap Computational Thinking Siswa"
+                    </p>
+                    <p>Terima kasih sebesar-besarnya kami ucapkan kepada:</p>
+                    <p class="font-black text-slate-950 mt-1 text-base">MAN 2 Sijunjung Plus Keterampilan</p>
+                    <p class="mt-3 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        Atas kontribusi dan kerja sama dalam pengembangan serta pengujian instrumen penelitian ini.
+                    </p>
+                </div>
+            </div>
+        `,
+        icon: null,
+        confirmButtonText: 'Tutup',
+        confirmButtonColor: '#2563eb',
+        customClass: {
+            popup: 'rounded-[2rem] border border-white/10 shadow-2xl'
+        }
+    });
+}
 </script>
 </body>
 </html>
