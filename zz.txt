@@ -1,11 +1,13 @@
 Finishing...
 
-1. index.html --> GANTI NOMOR HP.
+1. index.html✅ --> GANTI NOMOR HP. 
 
-2. DahboardQu.html --> ganti pssword "Man 2 Sijunjung Plus Keterampilan"
+2. DahboardQu.html✅ --> ganti pssword "Man 2 Sijunjung Plus Keterampilan"
                    --> ganti nomor hp
                    --> Perbaharui info
 
 3. zdashboard.html --> 
 
-4. angket.html --> 
+4. angket.html --> ganti teks penjelasan instrumen
+
+5. 
