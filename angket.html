@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angket Praktikalitas | PhiQu-R Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root { --accent: #3b82f6; --bg: #0f172a; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            overflow-x: hidden; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .glass { 
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+
+        .likert-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .likert-item { flex: 1; min-width: 0; }
+
+        .likert-radio:checked + label { 
+            background: var(--accent); 
+            border-color: #60a5fa; 
+            color: white; 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .likert-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 4px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (max-width: 480px) {
+            .likert-label { padding: 8px 2px; }
+            .likert-label .skor-text { font-size: 0.6rem; }
+            .likert-label .skor-val { font-size: 1rem; }
+        }
+
+        .gradient-text { 
+            background: linear-gradient(90deg, #60a5fa, #22d3ee); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        /* Sticky Legend Style */
+        .sticky-legend {
+            position: sticky;
+            top: 1rem;
+            z-index: 30;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes loading { 0% { width: 0%; } 100% { width: 100%; } }
+    </style>
+</head>
+<body class="min-h-screen pb-10">
+
+    <div id="splash-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[#0f172a]">
+        <img src="./foto/1.2.png" class="w-28 h-28 md:w-32 md:h-32 object-contain animate__animated animate__pulse animate__infinite" alt="Logo">
+        <div class="mt-8 w-40 h-1 bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500 animate-[loading_2s_ease-in-out]"></div>
+        </div>
+    </div>
+
+    <div id="info-card" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+        <div class="glass p-6 md:p-10 rounded-[2rem] w-full max-w-2xl animate__animated animate__fadeInUp shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4">
+                    <i class="fas fa-file-alt text-3xl text-blue-500"></i>
+                </div>
+                <h3 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter">Penjelasan <span class="gradient-text">Instrumen</span></h3>
+            </div>
+            
+            <div class="space-y-4 text-slate-300 text-sm md:text-base leading-relaxed mb-8">
+                <div class="bg-white/5 p-5 rounded-2xl border border-white/10 italic">
+                    "Instrumen ini digunakan untuk mengukur efektivitas dan kemudahan penggunaan aplikasi <strong>PhiQu-R</strong> sebagai media pembelajaran berbasis <strong>Computational Thinking</strong>."
+                </div>
+                
+                <p>Pengisian angket ini bertujuan untuk mendapatkan data kualitatif dan kuantitatif mengenai sejauh mana media ini dapat membantu proses belajar mengajar. Partisipasi Anda sangat berharga untuk pengembangan riset pendidikan yang lebih adaptif.</p>
+                
+                <div class="space-y-3">
+                    <p class="font-bold text-white text-xs uppercase tracking-widest border-l-2 border-blue-500 pl-3">Aspek Penilaian:</p>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <li class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+                            <i class="fas fa-check-circle text-blue-400 mt-0.5"></i>
+                            <span><strong>Aspek Efisiensi:</strong> Kemudahan operasional media.</span>
+                        </li>
+                        <li class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+                            <i class="fas fa-check-circle text-blue-400 mt-0.5"></i>
+                            <span><strong>Aspek Daya Tarik:</strong> Kualitas visual dan interaksi.</span>
+                        </li>
+                        <li class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+                            <i class="fas fa-check-circle text-blue-400 mt-0.5"></i>
+                            <span><strong>Aspek CT:</strong> Keterkaitan dengan pola pikir komputasi.</span>
+                        </li>
+                        <li class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+                            <i class="fas fa-check-circle text-blue-400 mt-0.5"></i>
+                            <span><strong>Aspek Relevansi:</strong> Kesesuaian dengan konsep Fisika.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button onclick="showRoleSelection()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20">
+                Lanjutkan <i class="fas fa-chevron-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="role-selection" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass p-8 rounded-[2.5rem] w-full max-w-sm text-center animate__animated animate__zoomIn">
+            <h3 class="text-xl font-black mb-6">Pilih <span class="gradient-text">Peran</span></h3>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="initSurvey('Siswa')" class="p-5 rounded-2xl glass hover:border-blue-500 transition-all group active:scale-95">
+                    <div class="w-12 h-12 mx-auto bg-blue-500/10 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-500/20">
+                        <i class="fas fa-user-graduate text-2xl text-blue-400"></i>
+                    </div>
+                    <p class="font-bold text-sm">Siswa</p>
+                </button>
+                <button onclick="initSurvey('Guru')" class="p-5 rounded-2xl glass hover:border-green-500 transition-all group active:scale-95">
+                    <div class="w-12 h-12 mx-auto bg-green-500/10 rounded-full flex items-center justify-center mb-3 group-hover:bg-green-500/20">
+                        <i class="fas fa-chalkboard-teacher text-2xl text-green-400"></i>
+                    </div>
+                    <p class="font-bold text-sm">Guru</p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content" class="hidden max-w-3xl mx-auto p-4 md:p-6 pt-8">
+        
+        <div class="sticky-legend animate__animated animate__fadeInDown">
+            <div class="glass p-3 md:p-4 rounded-2xl border-blue-500/30 border shadow-2xl flex justify-between items-center gap-1 md:gap-4">
+                <div class="flex flex-col items-center flex-1 text-center">
+                    <span class="text-red-400 font-black text-xs md:text-sm">1</span>
+                    <span class="text-[8px] md:text-[10px] text-slate-400 uppercase leading-none">STS</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 text-center border-l border-white/5">
+                    <span class="text-orange-400 font-black text-xs md:text-sm">2</span>
+                    <span class="text-[8px] md:text-[10px] text-slate-400 uppercase leading-none">TS</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 text-center border-l border-white/5">
+                    <span class="text-yellow-400 font-black text-xs md:text-sm">3</span>
+                    <span class="text-[8px] md:text-[10px] text-slate-400 uppercase leading-none">N</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 text-center border-l border-white/5">
+                    <span class="text-green-400 font-black text-xs md:text-sm">4</span>
+                    <span class="text-[8px] md:text-[10px] text-slate-400 uppercase leading-none">S</span>
+                </div>
+                <div class="flex flex-col items-center flex-1 text-center border-l border-white/5">
+                    <span class="text-blue-400 font-black text-xs md:text-sm">5</span>
+                    <span class="text-[8px] md:text-[10px] text-slate-400 uppercase leading-none">SS</span>
+                </div>
+            </div>
+            <div class="text-[9px] text-center mt-2 text-slate-500 italic">STS: Sangat Tidak Setuju | SS: Sangat Setuju</div>
+        </div>
+
+        <div class="glass rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-2xl relative overflow-hidden">
+            
+            <div class="mb-8 relative z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span id="role-badge" class="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-lg text-[9px] font-black uppercase tracking-widest">Siswa</span>
+                        <h1 class="text-2xl md:text-3xl font-black mt-2">Lembar Respon</h1>
+                    </div>
+                    <img src="./foto/1.2.png" class="w-10 h-10 object-contain opacity-50">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 relative z-10">
+                <div class="space-y-1">
+                    <label class="text-[9px] uppercase font-bold ml-1 text-slate-500">Nama Lengkap</label>
+                    <input type="text" id="nama" class="w-full p-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-sm transition-all shadow-inner" placeholder="Contoh: Ammar">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[9px] uppercase font-bold ml-1 text-slate-500">Asal Instansi</label>
+                    <input type="text" id="sekolah" class="w-full p-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-sm transition-all shadow-inner" placeholder="Contoh: SMAN 1 Payakumbuh">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[9px] uppercase font-bold ml-1 text-slate-500">No. WhatsApp</label>
+                    <input type="number" id="hp" class="w-full p-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-sm transition-all shadow-inner" placeholder="08xxxxxxxx">
+                </div>
+            </div>
+
+            <div id="questions-list" class="space-y-12 relative z-10"></div>
+
+            <div class="mt-12 space-y-3 relative z-10 animate__animated animate__fadeInUp">
+                <label class="flex items-center gap-2 text-[9px] uppercase font-bold text-blue-400 tracking-tighter">
+                    <i class="fas fa-pen-nib"></i> Komentar & Saran (Opsional)
+                </label>
+                <textarea id="komentar" rows="3" placeholder="Apa yang perlu diperbaiki atau apa yang sudah bagus?" 
+                    class="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-sm transition-all resize-none"></textarea>
+            </div>
+
+            <button onclick="calculateAndSubmit()" class="w-full mt-10 py-4 bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all transform active:scale-95 shadow-xl">
+                Kirim Penilaian <i class="fas fa-paper-plane ml-2"></i>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "URL_GOOGLE_SCRIPT_BARU_ANDA"; 
+        let selectedRole = "";
+
+        const dbQuestions = {
+            Siswa: [
+                "Aplikasi PhiQu-R sangat mudah saya operasikan sendiri tanpa bimbingan intensif.",
+                "Tampilan desain aplikasi ini terlihat modern, futuristik, dan tidak membosankan.",
+                "Langkah-langkah Computational Thinking (CT) dalam media ini mudah saya ikuti.",
+                "Simulasi fisika dalam aplikasi membantu saya memvisualisasikan konsep yang abstrak.",
+                "Aplikasi ini sangat praktis untuk digunakan kapan saja sebagai media belajar mandiri."
+            ],
+            Guru: [
+                "Media ini sangat membantu Guru dalam mengintegrasikan pola pikir Computational Thinking ke siswa.",
+                "Alur navigasi aplikasi sangat logis dan terstruktur sehingga mudah diajarkan kembali.",
+                "Visualisasi dan konten fisika di dalam media ini sudah sesuai dengan prinsip keilmuan.",
+                "Fitur-fitur yang tersedia sangat menunjang ketercapaian tujuan pembelajaran di kelas.",
+                "Media ini merupakan inovasi yang layak untuk diterapkan secara berkelanjutan di sekolah."
+            ]
+        };
+
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('info-card').classList.remove('hidden');
+                }, 500);
+            }, 2000);
+        };
+
+        function showRoleSelection() {
+            document.getElementById('info-card').style.display = 'none';
+            document.getElementById('role-selection').classList.remove('hidden');
+        }
+
+        function initSurvey(role) {
+            selectedRole = role;
+            document.getElementById('role-selection').style.display = 'none';
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('role-badge').innerText = role;
+            
+            const list = document.getElementById('questions-list');
+            dbQuestions[role].forEach((q, i) => {
+                list.innerHTML += `
+                    <div class="animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.1}s">
+                        <p class="text-slate-100 text-sm md:text-base font-semibold mb-5 leading-relaxed tracking-tight">
+                            <span class="text-blue-500 font-black mr-2">${i+1}.</span>${q}
+                        </p>
+                        <div class="likert-container">
+                            ${[1, 2, 3, 4, 5].map(v => `
+                                <div class="likert-item">
+                                    <input type="radio" name="q${i}" id="q${i}_${v}" value="${v}" class="hidden likert-radio">
+                                    <label for="q${i}_${v}" class="likert-label">
+                                        <span class="skor-val font-black text-lg md:text-xl">${v}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function calculateAndSubmit() {
+            const nama = document.getElementById('nama').value;
+            const sekolah = document.getElementById('sekolah').value;
+            const hp = document.getElementById('hp').value;
+            const komentar = document.getElementById('komentar').value;
+            const inputs = document.querySelectorAll('input[type="radio"]:checked');
+
+            if(!nama || !sekolah || !hp || inputs.length < dbQuestions[selectedRole].length) {
+                Swal.fire({ icon: 'warning', title: 'Belum Lengkap', text: 'Mohon isi identitas dan semua butir pernyataan.', confirmButtonColor: '#3b82f6' });
+                return;
+            }
+
+            let totalSkor = 0;
+            let rawAnswers = [];
+            inputs.forEach(input => {
+                totalSkor += parseInt(input.value);
+                rawAnswers.push(input.value);
+            });
+            
+            const skorMaks = dbQuestions[selectedRole].length * 5;
+            const persentase = ((totalSkor / skorMaks) * 100).toFixed(2);
+            let kategori = persentase > 80 ? "Sangat Praktis" : persentase > 60 ? "Praktis" : "Cukup Praktis";
+
+            Swal.fire({ 
+                title: 'Data Sedang Dikirim', 
+                html: 'Mohon jangan tutup halaman ini...',
+                allowOutsideClick: false, 
+                didOpen: () => Swal.showLoading() 
+            });
+
+            try {
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify({
+                        action: 'submit_angket',
+                        role: selectedRole,
+                        nama: nama,
+                        sekolah: sekolah,
+                        hp: hp,
+                        persentase: persentase + "%",
+                        kategori: kategori,
+                        raw: rawAnswers.join(','),
+                        catatan: komentar
+                    }) 
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil Terkirim!',
+                    text: 'Data Anda telah tersimpan dalam sistem kami.',
+                    confirmButtonColor: '#3b82f6'
+                }).then(() => window.location.href = "profil.html");
+            } catch (e) {
+                window.location.href = "profil.html";
+            }
+        }
+    </script>
+</body>
+</html>
