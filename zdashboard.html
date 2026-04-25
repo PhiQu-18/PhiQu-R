@@ -3,134 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | PhiQu-R Database</title>
+    <title>PhiQu-R | Dashboard Praktikalitas</title>
     <link rel="icon" type="image/png" href="./foto/1.2.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        
+        :root { --bg-deep: #020617; --accent: #3b82f6; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-deep); 
+            color: white;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
+        .glass { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .card-glow:hover { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        .floating-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; z-index: 100; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-content { animation: slideUp 0.3s ease-out; width: 100%; max-width: 500px; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
+    <div id="mainModal" class="modal">
+        <div class="modal-content glass p-8 rounded-[2.5rem] relative">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div id="modalBody">
+                </div>
+        </div>
+    </div>
+
     <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+        <div class="flex items-center gap-5 mb-10">
+            <div class="relative">
+                <div class="absolute inset-0 bg-blue-500 blur-xl opacity-20"></div>
+                <img src="./foto/1.2.png" alt="Logo" class="w-14 h-14 object-contain relative z-10 drop-shadow-2xl">
+            </div>
             <div>
-                <h1 class="text-3xl font-black italic">DATABASE <span class="text-blue-500">PHIQUE-R</span></h1>
-                <p class="text-slate-400 text-sm">Monitoring Data Praktikalitas Real-time</p>
-            </div>
-            <div class="flex gap-4">
-                <div class="glass p-4 rounded-2xl text-center min-w-[120px]">
-                    <p class="text-[10px] uppercase font-bold text-slate-500">Total Responden</p>
-                    <p id="total-count" class="text-2xl font-black text-blue-400">0</p>
-                </div>
-                <button onclick="loadData()" class="glass p-4 rounded-2xl hover:bg-blue-600 transition-all">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
+                <h1 class="text-3xl font-800 tracking-tighter italic leading-none">PhiQu<span class="text-blue-500">-R</span></h1>
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Data Praktikalitas Dari Responden</p>
             </div>
         </div>
 
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-4">
-                <i class="fas fa-chalkboard-teacher text-green-400 text-xl"></i>
-                <h2 class="text-xl font-bold">Data Respon Guru (11 Pernyataan)</h2>
-            </div>
-            <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-white/5 border-b border-white/10 text-[10px] uppercase tracking-wider">
-                            <tr id="header-guru">
-                                </tr>
-                        </thead>
-                        <tbody id="body-guru" class="divide-y divide-white/5">
-                            </tbody>
-                    </table>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div class="glass p-6 rounded-[2rem] card-glow">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-wider">Total Guru</p>
+                <div class="flex items-end gap-2">
+                    <h3 id="count-guru" class="text-4xl font-black text-white">0</h3>
+                    <i class="fas fa-chalkboard-teacher text-green-500 mb-2"></i>
                 </div>
+            </div>
+            <div class="glass p-6 rounded-[2rem] card-glow border-l-4 border-l-green-500">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-wider">Rata-rata Praktikalitas</p>
+                <h3 id="avg-guru" class="text-4xl font-black text-green-400">0%</h3>
+            </div>
+            <div class="glass p-6 rounded-[2rem] card-glow">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-wider">Total Siswa</p>
+                <div class="flex items-end gap-2">
+                    <h3 id="count-siswa" class="text-4xl font-black text-white">0</h3>
+                    <i class="fas fa-user-graduate text-blue-500 mb-2"></i>
+                </div>
+            </div>
+            <div class="glass p-6 rounded-[2rem] card-glow border-l-4 border-l-blue-500">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-wider">Rata-rata Praktikalitas</p>
+                <h3 id="avg-siswa" class="text-4xl font-black text-blue-400">0%</h3>
             </div>
         </div>
 
-        <div>
-            <div class="flex items-center gap-3 mb-4">
-                <i class="fas fa-user-graduate text-blue-400 text-xl"></i>
-                <h2 class="text-xl font-bold">Data Respon Siswa (7 Pernyataan)</h2>
-            </div>
-            <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-white/5 border-b border-white/10 text-[10px] uppercase tracking-wider">
-                            <tr id="header-siswa">
-                                </tr>
-                        </thead>
-                        <tbody id="body-siswa" class="divide-y divide-white/5">
-                            </tbody>
-                    </table>
+<div class="space-y-12 pb-24"> <section>
+                <div class="flex items-center gap-4 mb-6 px-2">
+                    <span class="bg-green-500 w-2 h-8 rounded-full"></span>
+                    <h2 class="text-xl font-black uppercase tracking-tight">Database Responden Guru</h2>
                 </div>
-            </div>
+                <div class="glass rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-white/5 border-b border-white/10"><tr id="header-guru"></tr></thead>
+                            <tbody id="body-guru" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="flex items-center gap-4 mb-6 px-2">
+                    <span class="bg-blue-500 w-2 h-8 rounded-full"></span>
+                    <h2 class="text-xl font-black uppercase tracking-tight">Database Responden Siswa</h2>
+                </div>
+                <div class="glass rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-white/5 border-b border-white/10"><tr id="header-siswa"></tr></thead>
+                            <tbody id="body-siswa" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="h-10"></div> 
+            </section>
+        </div>
+
+    <div class="floating-nav">
+        <div class="glass rounded-full p-2.5 flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='dashboardQu.html'" class="w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/10 text-slate-400"><i class="fas fa-home"></i></button>
+            <button onclick="loadData()" id="sync-btn" class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/40"><i class="fas fa-sync-alt text-white text-lg"></i></button>
+            <button onclick="exportToCSV()" class="w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/10 text-slate-400"><i class="fas fa-file-csv"></i></button>
+            <button onclick="showInfo()" class="w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/10 text-slate-400"><i class="fas fa-info-circle"></i></button>
         </div>
     </div>
 
     <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwGulnu5nDH7jbN9EZT4_4RhokC8piLgW9CH5ma42S_PAe1G0yECV-Al4U7QKyUhyGWcg/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxzwUBGS0RysEYCS5uRP4koEd8bdLsakWjyhadqQlVCvCZKVXfmcKGcHtNkVPIZc_DHAQ/exec";
+        let fullData = null;
 
-    async function loadData() {
-        const syncBtn = document.querySelector('button i');
-        syncBtn.classList.add('fa-spin'); // Animasi putar saat loading
-        
-        try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            
-            document.getElementById('total-count').innerText = data.summary.totalResponden;
-
-            renderTable('guru', data.guru, 11);
-            renderTable('siswa', data.siswa, 7);
-        } catch (error) {
-            console.error("Gagal memuat data:", error);
-            alert("Gagal mengambil data dari database. Pastikan Web App sudah di-deploy sebagai 'Anyone'.");
-        } finally {
-            syncBtn.classList.remove('fa-spin');
-        }
-    }
-
-    function renderTable(type, items, pCount) {
-        const headerRow = document.getElementById(`header-${type}`);
-        const bodyRow = document.getElementById(`body-${type}`);
-        
-        // Sesuaikan nama header ini dengan baris 1 di Google Sheets kamu
-        let headers = ['Nama', 'Sekolah', 'WhatsApp'];
-        for(let i=1; i<=pCount; i++) headers.push(`P${i}`);
-        headers.push('Total', '%', 'Kategori', 'Catatan');
-
-        headerRow.innerHTML = headers.map(h => `<th class="px-6 py-4 font-bold text-slate-300 whitespace-nowrap">${h}</th>`).join('');
-
-        if (!items || items.length === 0) {
-            bodyRow.innerHTML = `<tr><td colspan="${headers.length}" class="px-6 py-10 text-center text-slate-500 italic">Belum ada data di sheet Data${type === 'guru' ? 'Guru' : 'Siswa'}</td></tr>`;
-            return;
+        async function loadData() {
+            const btn = document.querySelector('#sync-btn i');
+            btn.classList.add('fa-spin');
+            try {
+                const response = await fetch(API_URL);
+                fullData = await response.json();
+                document.getElementById('count-guru').innerText = fullData.summary.jumlahGuru;
+                document.getElementById('count-siswa').innerText = fullData.summary.jumlahSiswa;
+                document.getElementById('avg-guru').innerText = calculateAvg(fullData.guru) + "%";
+                document.getElementById('avg-siswa').innerText = calculateAvg(fullData.siswa) + "%";
+                renderTable('guru', fullData.guru, 11); 
+                renderTable('siswa', fullData.siswa, 7);
+            } catch (e) { alert("Sinkronisasi Gagal!"); }
+            finally { btn.classList.remove('fa-spin'); }
         }
 
-        bodyRow.innerHTML = items.map(item => `
-            <tr class="hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
-                <td class="px-6 py-4 font-bold text-white whitespace-nowrap">${item.Nama || '-'}</td>
-                <td class="px-6 py-4 text-slate-400 whitespace-nowrap">${item.Sekolah || '-'}</td>
-                <td class="px-6 py-4 text-slate-400 whitespace-nowrap">${item.WhatsApp || '-'}</td>
-                ${Array.from({length: pCount}, (_, i) => {
-                    const val = item['P'+(i+1)] || '0';
-                    return `<td class="px-6 py-4 text-center font-bold ${val >= 4 ? 'text-blue-400' : 'text-slate-500'}">${val}</td>`;
-                }).join('')}
-                <td class="px-6 py-4 font-black text-white">${item['Total Skor'] || '0'}</td>
-                <td class="px-6 py-4 text-green-400 font-bold">${item.Persentase || '0%'}</td>
-                <td class="px-6 py-4"><span class="px-2 py-1 bg-blue-500/10 text-blue-400 rounded text-[10px] font-bold">${item.Kategori || '-'}</span></td>
-                <td class="px-6 py-4 text-slate-400 text-xs italic max-w-xs truncate" title="${item.Catatan || ''}">${item.Catatan || '-'}</td>
-            </tr>
-        `).join('');
-    }
+        function calculateAvg(items) {
+            if (!items || items.length === 0) return 0;
+            const sum = items.reduce((acc, curr) => acc + parseFloat(curr.Persentase || 0), 0);
+            return (sum / items.length).toFixed(1);
+        }
 
-    window.onload = loadData;
-</script>
+        function renderTable(type, items, pCount) {
+            const headerRow = document.getElementById(`header-${type}`);
+            const bodyRow = document.getElementById(`body-${type}`);
+            let headers = ['Nama', 'Sekolah', 'WA'];
+            for(let i=1; i<=pCount; i++) headers.push(`P${i}`);
+            headers.push('Total', '%', 'Kategori', 'Aksi');
+            headerRow.innerHTML = headers.map(h => `<th class="px-6 py-5 font-bold text-slate-500 uppercase text-center whitespace-nowrap">${h}</th>`).join('');
+
+            bodyRow.innerHTML = items.map((item, idx) => `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 font-bold text-white whitespace-nowrap">${item.Nama || '-'}</td>
+                    <td class="px-6 py-4 text-slate-400 whitespace-nowrap">${item.Sekolah || '-'}</td>
+                    <td class="px-6 py-4 text-slate-500 text-center">${item.WhatsApp || '-'}</td>
+                    ${Array.from({length: pCount}, (_, i) => `<td class="px-4 py-4 text-center font-bold text-slate-600">${item['P'+(i+1)] || 0}</td>`).join('')}
+                    <td class="px-6 py-4 font-black text-center">${item['Total Skor'] || 0}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold text-center">${item.Persentase || '0%'}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-[9px] font-bold uppercase border border-blue-500/20">${item.Kategori || '-'}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="viewNote('${item.Nama}', \`${item.Catatan || 'Tidak ada catatan.'}\`)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-blue-600 transition-all flex items-center justify-center mx-auto">
+                            <i class="fas fa-comment-dots text-xs"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewNote(name, note) {
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600/20 flex items-center justify-center"><i class="fas fa-quote-left text-blue-400"></i></div>
+                    <div><h3 class="font-bold text-xl">${name}</h3><p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Catatan Responden</p></div>
+                </div>
+                <div class="bg-white/5 p-6 rounded-3xl border border-white/5 italic text-slate-300 leading-relaxed">"${note}"</div>
+            `;
+            document.getElementById('mainModal').classList.add('active');
+        }
+
+        function showInfo() {
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="text-center">
+                    <img src="./foto/1.2.png" class="w-20 mx-auto mb-6 drop-shadow-2xl">
+                    <h3 class="text-2xl font-black mb-2 italic">PhiQu<span class="text-blue-500">-R</span></h3>
+                    <p class="text-slate-400 text-sm mb-8 leading-relaxed">Sistem monitoring real-time untuk mengukur tingkat praktikalitas media intaraktif Fisika terintegrasi Coding dan Computational Thinking.</p>
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <div class="glass p-4 rounded-2xl"><p class="text-[10px] font-bold text-blue-400 uppercase">Developer</p><p class="font-bold text-sm">By. PhiQu</p></div>
+                        <div class="glass p-4 rounded-2xl"><p class="text-[10px] font-bold text-blue-400 uppercase">Thanks to</p><p class="font-bold text-sm">MAN 2 Sijunjung Plus Keterampilan</p></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('mainModal').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('mainModal').classList.remove('active'); }
+        window.onclick = (e) => { if(e.target.classList.contains('modal')) closeModal(); }
+
+function exportToCSV() {
+    if (!fullData) return alert("Muat data terlebih dahulu!");
+    
+    // Header Dasar
+    const baseHeader = ["Nama", "Sekolah", "WhatsApp"];
+    const tailHeader = ["Total Skor", "Persentase", "Kategori", "Catatan"];
+    
+    let csvContent = "data:text/csv;charset=utf-8,";
+
+    // --- BAGIAN 1: RESPONDEN GURU ---
+    csvContent += "=== DATA RESPONDEN GURU ===\n";
+    // Buat Header Guru (P1 - P11)
+    let guruP = [];
+    for(let i=1; i<=11; i++) guruP.push(`P${i}`);
+    csvContent += [...baseHeader, ...guruP, ...tailHeader].join(",") + "\n";
+    
+    fullData.guru.forEach(r => {
+        let row = [
+            `"${r.Nama || '-'}"`,
+            `"${r.Sekolah || '-'}"`,
+            `"${r.WhatsApp || '-'}"`
+        ];
+        // Tambahkan skor P1-P11
+        for(let i=1; i<=11; i++) row.push(r[`P${i}`] || 0);
+        // Tambahkan data akhir
+        row.push(r['Total Skor'] || 0);
+        row.push(r.Persentase || '0%');
+        row.push(`"${r.Kategori || '-'}"`);
+        row.push(`"${(r.Catatan || '-').replace(/"/g, '""')}"`); // Escape double quotes
+        csvContent += row.join(",") + "\n";
+    });
+
+    csvContent += "\n\n"; // Beri jarak antar kategori
+
+    // --- BAGIAN 2: RESPONDEN SISWA ---
+    csvContent += "=== DATA RESPONDEN SISWA ===\n";
+    // Buat Header Siswa (P1 - P7)
+    let siswaP = [];
+    for(let i=1; i<=7; i++) siswaP.push(`P${i}`);
+    csvContent += [...baseHeader, ...siswaP, ...tailHeader].join(",") + "\n";
+    
+    fullData.siswa.forEach(r => {
+        let row = [
+            `"${r.Nama || '-'}"`,
+            `"${r.Sekolah || '-'}"`,
+            `"${r.WhatsApp || '-'}"`
+        ];
+        // Tambahkan skor P1-P7
+        for(let i=1; i<=7; i++) row.push(r[`P${i}`] || 0);
+        // Tambahkan data akhir
+        row.push(r['Total Skor'] || 0);
+        row.push(r.Persentase || '0%');
+        row.push(`"${r.Kategori || '-'}"`);
+        row.push(`"${(r.Catatan || '-').replace(/"/g, '""')}"`); // Escape double quotes
+        csvContent += row.join(",") + "\n";
+    });
+
+    // Proses Download
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    const date = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
+    link.setAttribute("download", `Laporan_PhiQuR_${date}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+        window.onload = loadData;
+    </script>
 </body>
 </html>

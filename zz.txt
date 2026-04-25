@@ -6,8 +6,12 @@ Finishing...
                    --> ganti nomor hp
                    --> Perbaharui info
 
-3. zdashboard.html --> 
+3. zdashboard.html✅ --> ubah appscript
+                   --> memperbaharui tampilan dashboard
+                   --> menambahkan beberapa tombol navigasi
 
 4. angket.html --> ganti teks penjelasan instrumen
+               --> ganti pernyataan untuk siswa
+               -->tidak perlu ganti script atau tampilan lagi
 
 5. 
