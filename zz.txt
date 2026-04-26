@@ -20,4 +20,4 @@ Finishing...
 5. Profil.html✅ --> Perbaharui nomor hp admin
                  --> perbaharui navigasi tentang
 
-6. 
+6. pre.html✅    --> menyelesaikan soal 1-20
