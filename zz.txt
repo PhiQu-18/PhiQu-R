@@ -10,8 +10,11 @@ Finishing...
                    --> memperbaharui tampilan dashboard
                    --> menambahkan beberapa tombol navigasi
 
-4. angket.html --> ganti teks penjelasan instrumen
+4. angket.html✅ --> ganti teks penjelasan instrumen
                --> ganti pernyataan untuk siswa
-               -->tidak perlu ganti script atau tampilan lagi
+               --> tidak perlu ganti script atau tampilan lagi
+               --> ubah teks form
+               --> ganti pernyataan untuk guru
+               --> ganti bagian penjelasan aspek yang dinilai
 
 5. 
