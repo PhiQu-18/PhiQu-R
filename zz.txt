@@ -17,4 +17,7 @@ Finishing...
                --> ganti pernyataan untuk guru
                --> ganti bagian penjelasan aspek yang dinilai
 
-5. 
+5. Profil.html✅ --> Perbaharui nomor hp admin
+                 --> perbaharui navigasi tentang
+
+6. 
