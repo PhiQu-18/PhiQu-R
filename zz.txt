@@ -39,4 +39,7 @@ Finishing...
         editor5.html --> perbaharui studi kasus✅
                      --> perbaharui teks pangkat dan angka✅
 
-        editor6.html  --> 
+        editor6.html  --> perbaharui studi kasus✅
+                      --> misal kita buatkan dua kali dengan material yang sama maka kita tidak
+                        bisa langsung tambahkan level serap alphanya. melainkan dengan
+                        dengan memasukkan energi yang tersisa.
