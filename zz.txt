@@ -32,4 +32,6 @@ Finishing...
 
         editor2.html --> perbarui soal tantangan✅
 
-        editor3.html --> 
+        editor3.html --> perbarui studi kasus✅
+
+        editor4.html -->
