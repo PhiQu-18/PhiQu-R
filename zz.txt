@@ -43,3 +43,5 @@ Finishing...
                       --> misal kita buatkan dua kali dengan material yang sama maka kita tidak
                         bisa langsung tambahkan level serap alphanya. melainkan dengan
                         dengan memasukkan energi yang tersisa.
+
+8. Post.html
