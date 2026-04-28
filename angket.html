@@ -318,9 +318,21 @@
             });
             
             const skorMaks = dbQuestions[selectedRole].length * 5;
-            const persentase = ((totalSkor / skorMaks) * 100).toFixed(2);
-            let kategori = persentase > 80 ? "Sangat Praktis" : persentase > 60 ? "Praktis" : "Cukup Praktis";
+            const persentase = parseFloat(((totalSkor / skorMaks) * 100).toFixed(2));
 
+            let kategori = "";
+
+            if (persentase > 80) {
+                kategori = "Sangat Praktis";
+            } else if (persentase > 60) {
+                kategori = "Praktis";
+            } else if (persentase > 40) {
+                kategori = "Cukup Praktis";
+            } else if (persentase > 20) {
+                kategori = "Kurang Praktis";
+            } else {
+                kategori = "Tidak Praktis";
+            }
             Swal.fire({ 
                 title: 'Data Sedang Dikirim', 
                 html: 'Mohon jangan tutup halaman ini...',
