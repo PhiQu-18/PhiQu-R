@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post-Test PhiQu-R | Final Challenge</title>
+    <title>Post-Test | PhiQu-R</title>
     <link rel="icon" type="image/png" href="./foto/1.2.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -95,37 +95,42 @@
             // MASALAH 1: KONSER MUSIK (SOAL 1-4)
             // ==========================================
             {
-                masalah: "Masalah 1: Akustik Gedung Konser",
+                masalah: "Masalah 1: Riak di Kolam",
                 pilar: "Dekomposisi",
-                text: "Sebuah gedung konser mengalami masalah gema. Untuk memperbaikinya, bagian mana yang harus dianalisis secara terpisah (dekomposisi)?",
-                image: "https://images.unsplash.com/photo-1514525253361-b83f859b73c0?w=800",
-                options: ["Warna cat kursi", "Luas jendela, bahan dinding, dan tinggi plafon", "Harga alat musik", "Jumlah penonton", "Nama penyanyi"],
+                text: "Seorang siswa menjatuhkan batu ke dalam kolam. Ia mengamati jarak antar puncak gelombang 0,5 m dan dalam 10 detik terbentuk 20 gelombang. Besaran apa saja yang diketahui dari peristiwa tersebut?",
+                image: "./foto/1.jpg",
+                options: [
+                    "Cepat rambat dan energi",
+                    "Panjang gelombang, jumlah gelombang, waktu",
+                    "Frekuensi dan cepat rambat",
+                    "Amplitudo dan energi",
+                    "Periode dan energi"
+                ],
                 correct: 1,
-                // GANTI KODE DI SINI (Muncul di Soal 1-4)
-                code: "function cekAkustik(v, a) {\n  let rt60 = 0.161 * (v / a);\n  return `Waktu Dengung: ${rt60.toFixed(2)} detik`;\n}\nconsole.log(cekAkustik(1000, 45));"
+                code: "function gelombang(lambda, n, t) {\n  let f = n / t;\n  let v = lambda * f;\n  return {frekuensi: f, cepat: v};\n}\nlet hasil = gelombang(λ, n, t);\nconsole.log(`f = ${hasil.frekuensi} Hz`);\nconsole.log(`v = ${hasil.cepat} m/s`);"
             },
             {
-                masalah: "Masalah 1: Akustik Gedung Konser",
+                masalah: "Masalah 1: Riak dalam kolam",
                 pilar: "Abstraksi",
-                text: "Jika fokus utama kita adalah mengurangi pantulan suara, informasi mana yang paling tidak relevan?",
-                image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
-                options: ["Jenis bahan peredam", "Koefisien serap bunyi", "Ketebalan busa", "Warna karpet di lantai", "Luas permukaan dinding"],
+                text: "Untuk menentukan cepat rambat gelombang menggunakan kode diatas, siswa membuat model matematis dari fenomena tersebut. Manakah model yang paling tepat digunakan?",
+                image: "./foto/7.jpg",
+                options: ["v = λ​ / f", "v = λ​ + f", "v = f / λ​", "v = λ​ x f", "v = λ​ - f"],
                 correct: 3
             },
             {
-                masalah: "Masalah 1: Akustik Gedung Konser",
+                masalah: "Masalah 1: Riak dalam kolam",
                 pilar: "Pola",
-                text: "Semakin banyak bahan berpori yang dipasang, waktu dengung (RT60) semakin kecil. Pola hubungan ini adalah...",
-                image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800",
-                options: ["Berbanding lurus", "Berbanding terbalik", "Tidak berhubungan", "Konstan", "Eksponensial naik"],
+                text: "Dari pengamatan tersebut, siswa ingin menemukan hubungan antara jumlah gelombang (n), waktu (t) dan frekuesni (f). hubungan yang benar adalah...",
+                image: "./foto/7.jpg",
+                options: ["Frekuensi berbanding lurus dengan waktu", "Frekuensi berbanding lurus dengan jumlah gelombang", "Frekuensi berbanding terbalik dengan jumlah gelombang", "Frekuensi berbanding terbalik dengan waktu", "Frekuensi tidak dipengaruhi jumlah gelombang"],
                 correct: 1
             },
             {
-                masalah: "Masalah 1: Akustik Gedung Konser",
+                masalah: "Masalah 1: Riak dalam kolam",
                 pilar: "Algoritma",
-                text: "Langkah sistematis memasang peredam: 1. Ukur RT60, 2. Hitung luas dinding, 3. Pilih bahan, 4. Pasang. Jika RT60 masih tinggi, langkah yang diulang adalah...",
-                image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800",
-                options: ["Langkah 1", "Langkah 2", "Langkah 3 & 4", "Selesai saja", "Tidak ada"],
+                text: "Seorang siswa melempar batu berwarna merah kedalam kolam. Ia mengamati bahwa jarak antara dua puncak gelombang adalah 0,5 meter, dan dalam waktu 10 detik terbentuk 20 gelombang. Berapakah cepat rambat gelombang pada permukaan kolam tersebut? (Gunakan kode diatas dengan mengganti nilai λ​, n, dan t)",
+                image: "./foto/4.jpg",
+                options: ["0,5 m/s", "0,56 m/s", "1 m/s", "2 m/s", "5 m/s"],
                 correct: 2
             },
 
@@ -133,76 +138,76 @@
             // MASALAH 2: RADAR KAPAL SELAM (SOAL 5-8)
             // ==========================================
             {
-                masalah: "Masalah 2: Radar & Sonar",
+                masalah: "Gelombang pada Tali",
                 pilar: "Dekomposisi",
-                text: "Untuk menghitung jarak kapal ke dasar laut, data apa saja yang wajib diketahui?",
-                image: "https://images.unsplash.com/photo-1511210137255-6b5894103681?w=800",
-                options: ["Suhu air dan warna laut", "Waktu pantul dan cepat rambat bunyi di air", "Berat kapal dan jumlah kru", "Kedalaman laut saja", "Kecepatan angin"],
-                correct: 1,
+                text: "Pada seutas tali berwarna biru merambat gelombang transversal. Tali dengan panjang 2 meter memiliki massa 0,02 kg dan diberi tegangan sebesar 8 N. Besaran fisika yang diperlukan untuk menentukan cepat rambat gelombang pada tali adalah...",
+                image: "./foto/23.png",
+                options: ["Panjang tali, massa tali dan tegangan tali", "Warna tali dan jenis bahan", "Frekuensi dan amplitudo", "Energi dan daya", "Waktu dan jumlah gelombang"],
+                correct: 0,
                 // GANTI KODE DI SINI (Muncul di Soal 5-8)
-                code: "const vAir = 1500;\nfunction hitungJarak(t) {\n  return (vAir * t) / 2;\n}\nconsole.log(`Jarak Objek: ${hitungJarak(2.4)} meter`);"
+                code: "function cepatRambat(F, m, L) {\n  let mu = m / L;\n  let v = Math.sqrt(F / mu);\n  return `μ = ${mu} kg/m | v = ${v.toFixed(2)} m/s`;\n}\n\nconsole.log(cepatRambat(F, μ, m))"
             },
             {
-                masalah: "Masalah 2: Radar & Sonar",
+                masalah: "Gelombang pada Tali",
                 pilar: "Pola",
-                text: "Sinyal sonar memantul lebih cepat saat mengenai benda padat dibandingkan lumpur. Ini merupakan pengenalan pola berdasarkan...",
-                image: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800",
-                options: ["Warna benda", "Kekuatan intensitas pantulan", "Bau air", "Kecepatan arus", "Jumlah ikan"],
-                correct: 1
+                text: "Hubungan antara cepat rambat gelombang (v), tegangan tali (F) dan massa jenis linear (μ) adalah...",
+                image: "./foto/23.png",
+                options: ["v ∝ μ", "v ∝ 1/F", "v ∝ 1/√F", "v ∝ √F<sup>2</sup>", "v ∝ √F"],
+                correct: 4
             },
             {
-                masalah: "Masalah 2: Radar & Sonar",
+                masalah: "Gelombang pada Tali",
                 pilar: "Abstraksi",
-                text: "Saat menggunakan sonar untuk navigasi, keberadaan gelembung kecil udara sering diabaikan. Ini disebut proses...",
-                image: "https://images.unsplash.com/photo-1484627147104-f5197bcd6651?w=800",
-                options: ["Dekomposisi", "Abstraksi", "Algoritma", "Debugging", "Simulasi"],
+                text: "Model matematis yang tepat untuk menentukan cepat rambat gelombang pada tali adalah...",
+                image: "./foto/23.png",
+                options: ["v = F / μ", "v = √F/μ", "v = F x μ", "v = μ / F", "v = F + μ"],
                 correct: 1
             },
             {
-                masalah: "Masalah 2: Radar & Sonar",
+                masalah: "Gelombang pada Tali",
                 pilar: "Algoritma",
-                text: "Urutan kerja sonar: Pancarkan sinyal -> Tunggu pantulan -> Hitung waktu -> Tentukan jarak. Jika 'Tunggu pantulan' gagal, maka...",
-                image: "https://images.unsplash.com/photo-1624314138470-5a2f24623f10?w=800",
-                options: ["Jarak otomatis nol", "Sinyal harus dipancarkan ulang", "Kapal langsung berhenti", "Hitung waktu secara manual", "Ganti baterai"],
-                correct: 1
+                text: "Jika seutas tali tersebut memiliki panjang 2 meter, memiliki massa 0,02 kg dan diberi gaya sebesar 8 N. Berapakah cepat rambat gelombang pada tali tersebut? (Hitung menggunakan kode diatas dengan mengganti simbol yang sesuai.)",
+                image: "./foto/23.png",
+                options: ["10 m/s", "20 m/s", "28,3 m/s", "40 m/s", "80 m/s"],
+                correct: 2
             },
 
             // ==========================================
             // MASALAH 3: DAWAI & RESONANSI (SOAL 9-12)
             // ==========================================
             {
-                masalah: "Masalah 3: Dawai & Alat Musik",
-                pilar: "Pola",
-                text: "Senar gitar yang lebih tipis menghasilkan nada lebih tinggi. Jika senar dipertebal, maka...",
-                image: "https://images.unsplash.com/photo-1525201548942-d908756d4088?w=800",
-                options: ["Nada makin tinggi", "Nada makin rendah", "Nada tetap", "Senar putus", "Suara hilang"],
-                correct: 1,
-                // GANTI KODE DI SINI (Muncul di Soal 9-12)
-                code: "function frekuensiDawai(F, L, m) {\n  let v = Math.sqrt(F / (m/L));\n  return v / (2 * L);\n}\nconsole.log(`Frekuensi: ${frekuensiDawai(100, 0.6, 0.01).toFixed(2)} Hz`);"
-            },
-            {
-                masalah: "Masalah 3: Dawai & Alat Musik",
+                masalah: "Masalah 3: Konser Musik dan Kebisingan",
                 pilar: "Dekomposisi",
-                text: "Bunyi gitar akustik berasal dari getaran dawai dan resonansi udara. Memisahkan dua hal ini untuk dipelajari adalah...",
-                image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=800",
-                options: ["Abstraksi", "Pola", "Dekomposisi", "Algoritma", "Evaluasi"],
-                correct: 2
+                text: "Seorang siswa berada disebuah konser musik. Ia mengamati bahwa pada jarak tertentu, intensitas bunyi yang diterima telinganya adalah I<sub>1</sub>. ketika ia menjauh hingga jaraknya menjadi 2 kali lipat, intensitas menjadi I<sub>2</sub>. Besaran fisika yang mempengaruhi besar kecilnya intensitas bunyi yang diterima pendengar adalah...",
+                image: "./foto/9.png",
+                options: ["Warna speaker dan jenis musik", "Jumlah penonton", "Waktu konser berlangsung", "Intensitas sumber dan jarak dari sumber", "Suhu udara saja"],
+                correct: 3,
+                // GANTI KODE DI SINI (Muncul di Soal 9-12)
+                code: "function intensitas(I1, r1, r2) {\n  let I2 = I1 * Math.pow(r1 / r2, 2);\n  return `Intensitas akhir: ${I2.toFixed(2)} W/m^2`;\n}\n\nconsole.log(intensitas(100, 1, 2))"
             },
             {
-                masalah: "Masalah 3: Dawai & Alat Musik",
-                pilar: "Algoritma",
-                text: "Langkah menyetem gitar: 1. Petik senar, 2. Bandingkan nada, 3. Putar dryer, 4. Ulangi. Ini disebut algoritma...",
-                image: "https://images.unsplash.com/photo-1516924912317-739343360b13?w=800",
-                options: ["Searching", "Sorting", "Looping (perulangan)", "Filtering", "Deleting"],
-                correct: 2
+                masalah: "Masalah 3: Konser Musik dan Kebisingan",
+                pilar: "Pola",
+                text: "Hubungan antara intensitas bunyi (I) dan jarak (r) dari sumber bunyi adalah...",
+                image: "./foto/8.jpg",
+                options: ["I ∝ r", "I ∝ r<sup>2</sup>", "I ∝ 1/r", "I ∝ 1/r<sub>2</sup>", "Tidak berhubungan"],
+                correct: 3
             },
             {
-                masalah: "Masalah 3: Dawai & Alat Musik",
+                masalah: "Masalah 3: Konser Musik dan Kebisingan",
                 pilar: "Abstraksi",
-                text: "Saat menghitung frekuensi nada, kita sering mengabaikan suhu ruangan. Ini adalah bentuk...",
-                image: "https://images.unsplash.com/photo-1510915363390-1534c3e1e374?w=800",
-                options: ["Pola", "Algoritma", "Abstraksi", "Dekomposisi", "Sintesis"],
-                correct: 2
+                text: "Model matematis yang tepat untuk menggambarkan perubahan intensitas bunyi terhadap jarak adalah...",
+                image: "./foto/8.jpg",
+                options: ["I = 1/r<sup>2</sup>", "I = r<sup>2</sup>", "I = 1/r", "I = r", "I = r<sup>3</sup>"],
+                correct: 0
+            },
+            {
+                masalah: "Masalah 3: Konser Musik dan Kebisingan",
+                pilar: "Algoritma",
+                text: "Jika intensitas bunyi pada jarak 1 meter adalah 100 W/m<sup>2</sup> , maka pada jarak 2 meter intensitasnya menjadi... (Gunakan kode diatas untuk menghitung hasil yang sesuai)",
+                image: "./foto/8.jpg",
+                options: ["100 W/m<sup>2</sup>", "50 W/m<sup>2</sup>", "40 W/m<sup>2</sup>", "30 W/m<sup>2</sup>", "25 W/m<sup>2</sup>"],
+                correct: 4
             },
 
             // ==========================================
@@ -210,75 +215,81 @@
             // ==========================================
             {
                 masalah: "Masalah 4: Ambulans & Doppler",
-                pilar: "Pola",
-                text: "Saat ambulans mendekati Anda, bunyi sirine terasa makin tinggi. Apa pola yang terjadi pada frekuensi yang didengar?",
-                image: "https://images.unsplash.com/photo-1587574293340-e0011c4e8ecf?w=800",
-                options: ["Fp < Fs", "Fp > Fs", "Fp = Fs", "Fp = 0", "Fp negatif"],
+                pilar: "Dekomposisi",
+                text: "Sebuah ambulans membunyikan sirene dengan frekuesi 800 Hz dan bergerak mendekati seorang pengamat yang diam di pingir jalan dengan kecepatan 20 m/s. jika cepat rambat udara adalah 340 m/s. Besaran fisika yang diperlukan untuk menentukan frekuensi yang didengar pengamat adalah...",
+                image: "./foto/12.jpeg",
+                options: ["Warna aambulans dan jenis sirene", "Frekuensi sumber, cepat rambat bunyi dan kecepatan sumber", "Suhu udara saja", "Waktu tempuh ambulans", "Energi bunyi"],
                 correct: 1,
                 // GANTI KODE DI SINI (Muncul di Soal 13-16)
-                code: "const v = 340, fs = 1000, vs = 20;\nlet fp = fs * (v / (v - vs)); // Mendekat\nconsole.log(`Frekuensi Terdengar: ${fp.toFixed(0)} Hz`);"
+                code: "function doppler(fs, v, vs) {\n  let fp = fs * (v / (v - vs));\n  return `Frekuensi terdengar: ${fp.toFixed(0)} Hz`;\n}\n\nconsole.log(doppler(f_s, v, v_s));"
             },
             {
                 masalah: "Masalah 4: Ambulans & Doppler",
-                pilar: "Dekomposisi",
-                text: "Untuk memecahkan rumus Doppler, variabel apa saja yang harus dipisahkan?",
-                image: "https://images.unsplash.com/photo-1512630221856-6c841e7ed87f?w=800",
-                options: ["Waktu dan Tanggal", "V (cepat rambat), Vs (sumber), dan Vp (pendengar)", "Warna mobil dan sirine", "Jenis bensin ambulans", "Nama supir"],
-                correct: 1
+                pilar: "Pola",
+                text: "Ketika sumber bunyi mendekati pengamat, maka frekuensi yang didengar akan...",
+                image: "./foto/12.jpeg",
+                options: ["Lebih kecil dari frekuensi sumber", "Sama dengan frekuensi sumber", "Lebih besar dari frekuensi sumber", "Menjadi nol", "Tidak berubah"],
+                correct: 2
             },
             {
                 masalah: "Masalah 4: Ambulans & Doppler",
                 pilar: "Abstraksi",
-                text: "Dalam simulasi Doppler di kelas, bunyi pantulan dari gedung sekitar sering dianggap tidak ada. Hal ini bertujuan untuk...",
-                image: "https://images.unsplash.com/photo-1562619371-b67725b6fde2?w=800",
-                options: ["Menyulitkan soal", "Menyederhanakan masalah (Abstraksi)", "Membuat pola baru", "Mengikuti algoritma", "Mencari kesalahan"],
-                correct: 1
+                text: "Model matematis yang tepat untuk kasus sumber yang mendekati pengamat adalah...",
+                image: "./foto/12.jpeg",
+                options: [
+                    { img: "./foto/zz1.png" },
+                    { img: "./foto/zz3.png" },
+                    { img: "./foto/zz4.png" },
+                    { img: "./foto/zz5.png" },
+                    { img: "./foto/zz2.png" }
+                ],
+            correct: 4
             },
             {
                 masalah: "Masalah 4: Ambulans & Doppler",
                 pilar: "Algoritma",
-                text: "Jika ambulans bergerak menjauh, maka tanda pada Vs dalam rumus menjadi (+) positif. Aturan pemilihan tanda ini adalah bagian dari...",
-                image: "https://images.unsplash.com/photo-1505751172676-59a358eeadff?w=800",
-                options: ["Abstraksi", "Dekomposisi", "Algoritma (Logical Steps)", "Pola visual", "Debugging"],
-                correct: 2
+                text: "Sebuah ambulans membunyikan sirene dengan frekuensi 800 Hz dan bergerak mendekati seorang pengamat yang diam di pinggir jalan dengan kecepatan 20 m/s. Cepat rambat bunyi di udara adalah 340 m/s. Berapakah frekuensi yang didengar oleh pengamat?",
+                image: "./foto/12.jpeg",
+                options: ["700 Hz", "750 Hz", "800 Hz", "820 Hz", "850 Hz"],
+                correct: 3
             },
 
             // ==========================================
             // MASALAH 5: GELOMBANG LAUT (SOAL 17-20)
             // ==========================================
             {
-                masalah: "Masalah 5: Energi Laut",
+                masalah: "Masalah 5: Fisika Bangunan & Peredam Kebisingan",
                 pilar: "Dekomposisi",
-                text: "Gelombang air laut membawa energi kinetik dan potensial. Membagi total energi menjadi dua bagian ini disebut...",
-                image: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800",
-                options: ["Perkalian", "Dekomposisi", "Abstraksi", "Pola", "Input"],
-                correct: 1,
+                text: "Seorang siswa tinggal di rumah yang berada dipinggir jalan raya. Tingkat kebisingan dikamarnya mencapai 110 dB. Agar bisa istirahat dan belajar dengan nyaman, ia ingin menurunkan kebisingan menjadi 30 dB. Jadi, ia berencana menutup seluruh dinding kamarnya yang seluas 20 m<sup>2</sup> menggunakan satu jenis material peredam. Untuk menentukan apakah suatu material dapat meredam suara dengan baik, besaran fisika yang perlu dianalisis adalah...",
+                image: "./foto/zzz.jfif",
+                options: ["Intensitas awal bunyi, koefisien serap dan luas dinding","Warna material dan bentuk ruangan", "Jumlah kendaraan di jalan", "Waktu siang atau malam", "Jenis musik yang didengar"],
+                correct: 0,
                 // GANTI KODE DI SINI (Muncul di Soal 17-20)
-                code: "let A = 2, rho = 1025, g = 9.8;\nlet energi = 0.5 * rho * g * (A**2);\nconsole.log(`Energi per meter: ${energi.toFixed(0)} Joule`);"
+                code: "function analisisPeredam(suara_awal, target, luas, koef, harga) {\n  let sisa = suara_awal * (1 - koef);\n  let biaya = luas * harga;\n\n  let status = sisa <= target ? 'LAYAK' : 'GAGAL';\n\n  return `Suara akhir: ${sisa.toFixed(1)} dB | Biaya: Rp ${biaya.toLocaleString('id-ID')} | Status: ${status}`;\n}\n\nconsole.log(analisisPeredam(0, 0, 0, 0, 0));"
             },
             {
-                masalah: "Masalah 5: Energi Laut",
+                masalah: "Masalah 5: Fisika Bangunan & Peredam Kebisingan",
                 pilar: "Pola",
-                text: "Semakin besar amplitudo gelombang, semakin besar energi yang dibawa. Pola ini bersifat...",
-                image: "https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800",
-                options: ["Linear", "Kuadratik (Pangkat dua)", "Tetap", "Menurun", "Acak"],
-                correct: 1
+                text: "Jika koefisien serap suatu material semakin besar, maka tingkat kebisingan yang tersisa didalam ruangan akan...",
+                image: "./foto/zzz1.jfif",
+                options: ["Semakin besar", "Tetap", "Semakin kecil", "Menjadi nol secara langsung", "Tidak dapat ditentukan"],
+                correct: 2
             },
             {
-                masalah: "Masalah 5: Energi Laut",
+                masalah: "Masalah 5: Fisika Bangunan & Peredam Kebisingan",
                 pilar: "Abstraksi",
-                text: "Saat menghitung energi gelombang murni, kita mengabaikan keberadaan kapal yang lewat. Proses ini adalah...",
-                image: "https://images.unsplash.com/photo-1516061803700-1c19d20c5861?w=800",
-                options: ["Dekomposisi", "Pola", "Abstraksi", "Algoritma", "Coding"],
+                text: "Model matematis yang digunakan untuk memperkirakan sisa kebisingan setelah peredaman adalah...",
+                image: "./foto/zzz2.jfif",
+                options: ["I<sub>akhir</sub> = I<sub>awal</sub> + α", "I<sub>akhir</sub> = I<sub>awal</sub> x α", "I<sub>akhir</sub> = I<sub>awal</sub> x (1 - α)", "I<sub>akhir</sub> = I<sub>awal</sub> / α", "I<sub>akhir</sub> = I<sub>awal</sub> - α<sup>2</sup>"],
                 correct: 2
             },
             {
-                masalah: "Masalah 5: Energi Laut",
+                masalah: "Masalah 5: Fisika Bangunan & Peredam Kebisingan",
                 pilar: "Algoritma",
-                text: "Langkah mitigasi tsunami: 1. Deteksi gempa, 2. Analisis air laut, 3. Beri peringatan, 4. Evakuasi. Ini adalah...",
-                image: "https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?w=800",
-                options: ["Pola", "Abstraksi", "Algoritma", "Dekomposisi", "Data"],
-                correct: 2
+                text: "Sebuah material memiliki koefisien serap (α) = 0.85 dengan harga = Rp450.000/m<sup>2</sup>. jika luas dinding adalah 20 m<sup>2</sup> tentukan sisa tingkat kebisingan didalam ruangan dan total biaya pemasangan material tersebut...",
+                image: "./foto/zzz1.jfif",
+                options: ["16,5 dB dan Rp10.000.000 (Gagal)", "40 dB dan Rp9.000.000 (Gagal)", "25 dB dan Rp8.000.000 (Layak)", "30 dB dan Rp9.000.000 (Layak)", "16,5 dB dan Rp9.000.000 (Layak)"],
+                correct: 4
             }
         ];
 
@@ -301,7 +312,7 @@
             const q = questions[currentIdx];
             
             // UI Updates
-            document.getElementById('q-text').innerText = q.text;
+            document.getElementById('q-text').innerHTML = q.text;
             document.getElementById('q-image').src = q.image;
             document.getElementById('pilar-badge').innerText = q.pilar;
             document.getElementById('problem-title').innerText = q.masalah;
@@ -320,8 +331,15 @@
                 btn.className = "option-card glass p-5 rounded-2xl flex items-center gap-4 animate__animated animate__fadeInRight";
                 btn.style.animationDelay = `${i * 0.1}s`;
                 btn.innerHTML = `
-                    <div class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30">${String.fromCharCode(65+i)}</div>
-                    <span class="text-sm font-semibold tracking-tight">${opt}</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30">
+                        ${String.fromCharCode(65+i)}
+                    </div>
+
+                    ${
+                        typeof opt === "string"
+                        ? `<span class="text-sm font-semibold tracking-tight">${opt}</span>`
+                        : `<img src="${opt.img}" class="w-full h-24 object-contain rounded-lg border border-white/10">`
+                    }
                 `;
                 btn.onclick = () => checkAnswer(i);
                 optionsDiv.appendChild(btn);
