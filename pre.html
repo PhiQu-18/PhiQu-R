@@ -138,7 +138,7 @@
                 pilar: "Algoritma",
                 masalah: "Masalah 1: Riak dalam Kolam (Gelombang)",
                 image: "./foto/4.jpg",
-                text: "Seorang siswa menjatuhkan sebuah batu ke dalam kolam yang tenang. Ia mengamati bahwa jarak antara dua puncak riak yang berurutan adalah 0,5 meter. Selain itu, dalam waktu 10 detik terbentuk 20 gelombang.Beberapa langkah yang siswa tersebut lakukan: 1. Menentukan panjang gelombang 2. Menghitung frekuensi dengan rumus f = n/t 3. Menghitung cepat rambat dengan rumus v = λf 4. Mengalikan panjang gelombang dengan frekuensi",
+                text: "Seorang siswa menjatuhkan sebuah batu ke dalam kolam yang tenang. Ia mengamati bahwa jarak antara dua puncak riak yang berurutan adalah 0,5 meter. Selain itu, dalam waktu 10 detik terbentuk 20 gelombang.<br>Beberapa langkah yang siswa tersebut lakukan: <br>1. Menentukan panjang gelombang <br>2. Menghitung frekuensi dengan rumus f = n/t <br>3. Menghitung cepat rambat dengan rumus v = λf <br>4. Mengalikan panjang gelombang dengan frekuensi",
                 extraText: "Urutan langkah dan hasil perhitungan yang tepat dari masalah diatas adalah...",
                 options: [
                     "1-2-3-4 dan 1 m/s",
@@ -278,8 +278,8 @@
                 pilar: "Dekomposisi",
                 masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
                 image: "./foto/13.png",
-                text: "Sebuah ambulans menyalakan sirene dengan frekuensi 400 Hz dan bergerak mendekati seorang pejalan kaki yang diam dengan kecepatan 20 m/s. Cepat rambat bunyi di udara adalah 340 m/s.",
-                extraText: "Besaran apa saja yang langsung diketahi dari permasalahan tersebut?",
+                text: "Sebuah ambulans bergerak mendekati seorang pengamat dengan kecepatan 20 m/s sambil membunyikan sirene berfrekuensi 800 Hz. Cepat rambat bunyi di udara adalah 340 m/s. Pengamat ingin mengetahui frekuensi bunyi yang didengar akibat efek doppler.",
+                extraText: "Untuk menentukan frekuensi bunyi yang didengar pengamat akibat efek doppler, komponen utama yang harus dianalisis adalah...",
                 options: [
                     "Energi bunyi dan amplitudo",
                     "Panjang gelombang dan periode",
@@ -294,13 +294,13 @@
                 pilar: "Pola",
                 masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
                 image: "./foto/12.jpeg",
-                text: "Jika sumber bunyi mendekati pendengar, maka frekuesni yang didengar akan...",
+                text: "Pada efek Doppler, ketika sumber bunyi bergerak mnedekati pengamat, yang akan terjadi adalah...",
                 options: [
-                    "Meningkat",
-                    "Menurun",
-                    "Tetap",
-                    "Nol",
-                    "Tidak dapat ditentukan"
+                    "Frekuensi yang didengar lebih besar dari frekuensi sumber",
+                    "Frekuensi yang didengar lebih kecil dari frekuensi sumber",
+                    "Frekuensi yang didengar sama dengan frekuensi sumber",
+                    "Cepat rambat bunyi menjadi bertambah",
+                    "Amplitudo selalu bertambah"
                 ],
                 correct: 0
             },
@@ -334,14 +334,14 @@
                 pilar: "Algoritma",
                 masalah: "Masalah 4: Sirene Ambulans (Efek Doppler)",
                 image: "./foto/15.png",
-                text: "Sebuah ambulans menyalakan sirene dengan frekuensi 400 Hz dan bergerak mendekati seorang pejalan kaki yang diam dengan kecepatan 20 m/s. Cepat rambat bunyi di udara adalah 340 m/s.",
-                extraText: "Berapakah frekuensi yang didengar oleh pejalan kaki?",
+                text: "Sebuah ambulans bergerak mendekati seorang pengamat dengan kecepatan 20 m/s sambil membunyikan sirene berfrekuensi 800 Hz. Cepat rambat bunyi di udara adalah 340 m/s. Pengamat ingin mengetahui frekuensi bunyi yang didengar akibat efek doppler. Langkah yang dilakukan pengamat yaitu: 1. Menentukan frekuensi sumber 2. Menentukan kecepatan sumber dan cepat rambat bunyi 3. Menggunakan rumus efek Doppler 4. Menghitung hasil subsitusi",
+                extraText: "Urutan langkah dan hasil perhitungan yang tepat adalah",
                 options: [
-                    "425 Hz",
-                    "429 Hz",
-                    "430 Hz",
-                    "450 Hz",
-                    "470 Hz"
+                    "1-2-3-4 dan 850 Hz",
+                    "2-1-3-4 dan 800 Hz",
+                    "1-3-2-4 dan 730 Hz",
+                    "2-3-4-1 dan 450 Hz",
+                    "3-2-1-4 dan 470 Hz"
                 ],
                 correct: 0
             },
@@ -419,7 +419,7 @@
             document.getElementById('q-masalah').innerText = q.masalah;
             document.getElementById('pilar-tag').innerText = q.pilar;
             document.getElementById('q-image').src = q.image;
-            document.getElementById('q-text').innerText = q.text;
+            document.getElementById('q-text').innerHTML = q.text;
             document.getElementById('q-extra').innerText = q.extraText || "";
 
             const optionsDiv = document.getElementById('options');
