@@ -97,7 +97,7 @@
             {
                 masalah: "Masalah 1: Riak di Kolam",
                 pilar: "Dekomposisi",
-                text: "Seorang siswa menjatuhkan batu ke dalam kolam. Ia mengamati jarak antar puncak gelombang 0,5 m dan dalam 10 detik terbentuk 20 gelombang. Besaran apa saja yang diketahui dari peristiwa tersebut?",
+                text: "Seorang siswa menjatuhkan batu ke dalam kolam. Untuk menganalisis gelombang pada permukaan kolam, seorang siswa mencatat bahwa panjang satu gelombang adalah 0,5 meter. Ia juga menghitung ada 20 gelombang yang terbentuk selama 10 detik. Informasi utama yang diketahui adalah...",
                 image: "./foto/1.jpg",
                 options: [
                     "Cepat rambat dan energi",
@@ -112,25 +112,30 @@
             {
                 masalah: "Masalah 1: Riak dalam kolam",
                 pilar: "Abstraksi",
-                text: "Untuk menentukan cepat rambat gelombang menggunakan kode diatas, siswa membuat model matematis dari fenomena tersebut. Manakah model yang paling tepat digunakan?",
-                image: "./foto/7.jpg",
+                text: "Untuk menentukan cepat rambat gelombang menggunakan kode diatas, siswa membuat model matematis dari fenomena tersebut. Manakah model yang paling tepat digunakan untuk menentukan cepat rambat gelombang pada permukaan air kolam...",
+                image: "./foto/1.jpg",
                 options: ["v = λ​ / f", "v = λ​ + f", "v = f / λ​", "v = λ​ x f", "v = λ​ - f"],
                 correct: 3
             },
             {
                 masalah: "Masalah 1: Riak dalam kolam",
                 pilar: "Pola",
-                text: "Dari pengamatan tersebut, siswa ingin menemukan hubungan antara jumlah gelombang (n), waktu (t) dan frekuesni (f). hubungan yang benar adalah...",
-                image: "./foto/7.jpg",
-                options: ["Frekuensi berbanding lurus dengan waktu", "Frekuensi berbanding lurus dengan jumlah gelombang", "Frekuensi berbanding terbalik dengan jumlah gelombang", "Frekuensi berbanding terbalik dengan waktu", "Frekuensi tidak dipengaruhi jumlah gelombang"],
+                text: "Dari pengamatan tersebut, siswa ingin menemukan hubungan antara jumlah gelombang dengan frekuensi. hubungan yang benar adalah...",
+                image: "./foto/z0.png",
+                options: ["Semakin banyak gelombang, frekuensi semakin kecil", "Semakin banyak gelombang dalam waktu yang sama, frekuensi semakin besar", "Frekuensi tidak dipengaruhi jumlah gelombang", "Frekuensi selalu sama dengan periode", "Jumlah gelombang tidak mempengaruhi frekuensi"],
                 correct: 1
             },
             {
                 masalah: "Masalah 1: Riak dalam kolam",
                 pilar: "Algoritma",
-                text: "Seorang siswa melempar batu berwarna merah kedalam kolam. Ia mengamati bahwa jarak antara dua puncak gelombang adalah 0,5 meter, dan dalam waktu 10 detik terbentuk 20 gelombang. Berapakah cepat rambat gelombang pada permukaan kolam tersebut? (Gunakan kode diatas dengan mengganti nilai λ​, n, dan t)",
+                text: "Seorang siswa melempar batu berwarna merah kedalam kolam. Ia mengamati bahwa jarak antara dua puncak gelombang adalah 0,5 meter, dan dalam waktu 10 detik terbentuk 20 gelombang. <br>Perhatikan potongan <B>Code</B> diatas. Urutan langkah dan hasil perhitungan yang benar adalah... (Gunakan kode diatas dengan mengganti nilai λ​, n, dan t)",
                 image: "./foto/4.jpg",
-                options: ["0,5 m/s", "0,56 m/s", "1 m/s", "2 m/s", "5 m/s"],
+                options:
+                        ["Menentukan (n) -> menghitung cepat rambat -> Menentukan λ -> hasil 0,2 m/s",
+                         "Menentukan λ -> Menghitung cepat rambat -> Menghitung frekuensi -> hasil 0,5 m/s",
+                         "Menentukan λ​ -> menentukan n dan t -> Menghitung frekuensi -> Menghitung cepat rambat, hasil 1 m/s",
+                         "Menghitung frekuensi -> menentukan λ -> menghitung energi -> hasil 10 m/s",
+                         "Menentukan waktu -> menghitung amplitudo -> menghitung cepat rambat -> hasil 4 m/s"],
                 correct: 2
             },
 
@@ -145,14 +150,14 @@
                 options: ["Panjang tali, massa tali dan tegangan tali", "Warna tali dan jenis bahan", "Frekuensi dan amplitudo", "Energi dan daya", "Waktu dan jumlah gelombang"],
                 correct: 0,
                 // GANTI KODE DI SINI (Muncul di Soal 5-8)
-                code: "function cepatRambat(F, m, L) {\n  let mu = m / L;\n  let v = Math.sqrt(F / mu);\n  return `μ = ${mu} kg/m | v = ${v.toFixed(2)} m/s`;\n}\n\nconsole.log(cepatRambat(F, μ, m))"
+                code: "function cepatRambat(F, m, L) {\n  let mu = m / L;\n  let v = Math.sqrt(F / mu);\n  return `μ = ${mu} kg/m | v = ${v.toFixed(2)} m/s`;\n}\n\nconsole.log(cepatRambat(F, m, L))"
             },
             {
                 masalah: "Gelombang pada Tali",
                 pilar: "Pola",
-                text: "Hubungan antara cepat rambat gelombang (v), tegangan tali (F) dan massa jenis linear (μ) adalah...",
-                image: "./foto/23.png",
-                options: ["v ∝ μ", "v ∝ 1/F", "v ∝ 1/√F", "v ∝ √F<sup>2</sup>", "v ∝ √F"],
+                text: "Massa jenis linear tali dapat dihitung menggunakan rumus seperti gambar diatas. yaitu: <br>μ = Massa jenis linear <br>m = Massa tali <br>L = Panjang tali. <br>Hubungan yang benar dari rumus diatas adalah...",
+                image: "./foto/1.0.png",
+                options: ["Semakin besar massa tali, nilai μ semakin kecil", "Massa jenis linear tidak dipengaruhi massa tali", "Semakin panjang massa tali, nilai μ selalu bertambah", "Nilai μ selalu tetap", "Semakin besar massa tali pada panjang tetap, nilai μ semakin besar"],
                 correct: 4
             },
             {
@@ -166,9 +171,9 @@
             {
                 masalah: "Gelombang pada Tali",
                 pilar: "Algoritma",
-                text: "Jika seutas tali tersebut memiliki panjang 2 meter, memiliki massa 0,02 kg dan diberi gaya sebesar 8 N. Berapakah cepat rambat gelombang pada tali tersebut? (Hitung menggunakan kode diatas dengan mengganti simbol yang sesuai.)",
+                text: "Pada seutas tali berwarna biru merambat gelombang transversal. Tali tersebut memiliki panjang 2 meter, massa 0,02 kg dan kemudian diberi gaya tegang sebesar 8 N. Urutan langkah dan hasil perhitungan yang tepat adalah...(Hitung menggunakan kode diatas dengan mengganti simbol yang sesuai.)",
                 image: "./foto/23.png",
-                options: ["10 m/s", "20 m/s", "28,3 m/s", "40 m/s", "80 m/s"],
+                options: ["Menghitung v -> menentukan F -> menghitung μ -> hasil 20 m/s", "Menentukan m -> menghitung energi -> menghitung v -> hasil 10 m/s", "Menentukan F, m dan L -> menghitung μ -> menghitung v -> hasil 28,28 m/s", "Menghitung μ -> menentukan F -> menghitung amplitudo -> hasil 40 m/s", "Menentukan L -> menghitung frekuensi -> menghitung v -> hasil 15 m/s"],
                 correct: 2
             },
 
@@ -178,7 +183,7 @@
             {
                 masalah: "Masalah 3: Konser Musik dan Kebisingan",
                 pilar: "Dekomposisi",
-                text: "Seorang siswa berada disebuah konser musik. Ia mengamati bahwa pada jarak tertentu, intensitas bunyi yang diterima telinganya adalah I<sub>1</sub>. ketika ia menjauh hingga jaraknya menjadi 2 kali lipat, intensitas menjadi I<sub>2</sub>. Besaran fisika yang mempengaruhi besar kecilnya intensitas bunyi yang diterima pendengar adalah...",
+                text: "Seorang siswa berada disebuah konser musik. Ia mengamati bahwa pada jarak tertentu, intensitas bunyi yang diterima telinganya adalah I<sub>1</sub>. ketika ia menjauh hingga jaraknya menjadi 2 kali lipat, intensitas menjadi I<sub>2</sub>. Untuk menentukan besar intensitas bunyi yang diterima pendengar setelah berpindah posisi, komponen utama yang harus dianalisis adalah...",
                 image: "./foto/9.png",
                 options: ["Warna speaker dan jenis musik", "Jumlah penonton", "Waktu konser berlangsung", "Intensitas sumber dan jarak dari sumber", "Suhu udara saja"],
                 correct: 3,
@@ -188,15 +193,15 @@
             {
                 masalah: "Masalah 3: Konser Musik dan Kebisingan",
                 pilar: "Pola",
-                text: "Hubungan antara intensitas bunyi (I) dan jarak (r) dari sumber bunyi adalah...",
-                image: "./foto/8.jpg",
-                options: ["I ∝ r", "I ∝ r<sup>2</sup>", "I ∝ 1/r", "I ∝ 1/r<sub>2</sup>", "Tidak berhubungan"],
+                text: "Setelah melakukan pengamatan, siswa tersebut mendapatkan persamaan seperti pada gambar diatas. yaitu: <br>I = Intensitas bunyi <br>r = jarak dari sumber bunyi <br>Pola hubungan antara jarak pendengar dari sumber bunyi dan intensitas bunyi yang diterima adalah...",
+                image: "./foto/q1.png",
+                options: ["Semakin jauh dari sumber, intensitas bunyi semakin besar", "Jarak tidak mempengaruhi intensitas bunyi", "Intensitas bunyi selalu tetap", "Semakin jauh dari sumber, intensitas bunyi semakin kecil", "Intensitas bunyi hanya dipengaruhi suhu udara"],
                 correct: 3
             },
             {
                 masalah: "Masalah 3: Konser Musik dan Kebisingan",
                 pilar: "Abstraksi",
-                text: "Model matematis yang tepat untuk menggambarkan perubahan intensitas bunyi terhadap jarak adalah...",
+                text: "Model matematis yang tepat untuk menentukan perubahan intensitas bunyi terhadap jarak adalah...",
                 image: "./foto/8.jpg",
                 options: ["I = 1/r<sup>2</sup>", "I = r<sup>2</sup>", "I = 1/r", "I = r", "I = r<sup>3</sup>"],
                 correct: 0
@@ -204,9 +209,9 @@
             {
                 masalah: "Masalah 3: Konser Musik dan Kebisingan",
                 pilar: "Algoritma",
-                text: "Jika intensitas bunyi pada jarak 1 meter adalah 100 W/m<sup>2</sup> , maka pada jarak 2 meter intensitasnya menjadi... (Gunakan kode diatas untuk menghitung hasil yang sesuai)",
+                text: "Seorang siswa yang berada disebuah konser musik. Ia mengamati bahwa pada jarak tertentu dari speker, intensitas bunyi yang diterimanya adalah 100 W/m<sup>2</sup>. Ketika ia menjauh dari 1 meter menjadi 2 meter dari sumber bunyi, intensitas bunyi juga ikut berubah. Urutan langkah dan hasil perhitungan intensitas diterima yang benar adalah(Gunakan kode diatas untuk menghitung hasil yang sesuai)",
                 image: "./foto/8.jpg",
-                options: ["100 W/m<sup>2</sup>", "50 W/m<sup>2</sup>", "40 W/m<sup>2</sup>", "30 W/m<sup>2</sup>", "25 W/m<sup>2</sup>"],
+                options: ["Menghitung I<sub>2</sub> -> menentukan r<sub1</sub> -> menentukan I<sub>1</sub> -> hasil 50 W/m<sup>2</sup>", "Menentukan I<sub>1</sub> -> menghitung frekuensi -> menghitung I<sub>2</sub> -> hasil 100 W/m<sup>2</sup>", "Menentukan r<sub>2</sub> -> menghitung energi -> menghitung I<sub>2</sub> -> hasil 10 W/m<sup>2</sup>", "Menghitung amplitudo -> menentukan I<sub>1</sub> -> menghitung I<sub>2</sub> -> hasil 75 W/m<sup>2</sup>", "Menentukan I<sub>1</sub> -> menentukan r<sub1</sub> dan r<sub>2</sub> -> menghitung I<sub>2</sub> -> hasil 25 W/m<sup>2</sup>"],
                 correct: 4
             },
 
@@ -218,7 +223,7 @@
                 pilar: "Dekomposisi",
                 text: "Sebuah ambulans membunyikan sirene dengan frekuesi 800 Hz dan bergerak mendekati seorang pengamat yang diam di pingir jalan dengan kecepatan 20 m/s. jika cepat rambat udara adalah 340 m/s. Besaran fisika yang diperlukan untuk menentukan frekuensi yang didengar pengamat adalah...",
                 image: "./foto/12.jpeg",
-                options: ["Warna aambulans dan jenis sirene", "Frekuensi sumber, cepat rambat bunyi dan kecepatan sumber", "Suhu udara saja", "Waktu tempuh ambulans", "Energi bunyi"],
+                options: ["Warna ambulans dan jenis sirene", "Frekuensi sumber, cepat rambat bunyi dan kecepatan sumber", "Suhu udara saja", "Waktu tempuh ambulans", "Energi bunyi"],
                 correct: 1,
                 // GANTI KODE DI SINI (Muncul di Soal 13-16)
                 code: "function doppler(fs, v, vs) {\n  let fp = fs * (v / (v - vs));\n  return `Frekuensi terdengar: ${fp.toFixed(0)} Hz`;\n}\n\nconsole.log(doppler(f_s, v, v_s));"
@@ -250,7 +255,7 @@
                 pilar: "Algoritma",
                 text: "Sebuah ambulans membunyikan sirene dengan frekuensi 800 Hz dan bergerak mendekati seorang pengamat yang diam di pinggir jalan dengan kecepatan 20 m/s. Cepat rambat bunyi di udara adalah 340 m/s. Berapakah frekuensi yang didengar oleh pengamat?",
                 image: "./foto/12.jpeg",
-                options: ["700 Hz", "750 Hz", "800 Hz", "820 Hz", "850 Hz"],
+                options: ["Menghitung f<sub>p</sub> -> menentukan f<sub>s</sub> -> menentukan v -> hasil 800 Hz", "Menentukan v<sub>s</sub> -> menghitung energi -> menghitung f<sub>p</sub> -> hasil 750 Hz", "Menentukan v -> menghitung amplitudo -> menghitung f<sub>p</sub> -> hasil 900 Hz", "Menentukan f<sub>s</sub> -> menentukan v dan v<sub>s</sub> -> menghitung f<sub>p</sub> -> hasil 850 Hz", "Menghitung frekuensi -> menentukan waktu -> menghitung f<sub>p</sup> -> hasil 820 Hz"],
                 correct: 3
             },
 
@@ -286,9 +291,9 @@
             {
                 masalah: "Masalah 5: Fisika Bangunan & Peredam Kebisingan",
                 pilar: "Algoritma",
-                text: "Sebuah material memiliki koefisien serap (α) = 0.85 dengan harga = Rp450.000/m<sup>2</sup>. jika luas dinding adalah 20 m<sup>2</sup> tentukan sisa tingkat kebisingan didalam ruangan dan total biaya pemasangan material tersebut...",
+                text: "Sebuah ruangan memiliki kebisingan awal sebesar 110 dB dengan target kebisingan maksimum 20 dB. Sebuah material peredam memiliki koefisien serap (α) = 0,85 dengan harga Rp450.000/m<sup>2</sup>. Jika luas dinding yang akan dipasang peredam adalah 20 m<sup>2</sup>. Susunlah urutan langkah pembangunan dan hasil perhitungan kelayakan dan harga dari material yang digunakan yang tepat... (Gunakan code diatas untuk menelesaikan masalah tersebut)",
                 image: "./foto/zzz1.jfif",
-                options: ["16,5 dB dan Rp10.000.000 (Gagal)", "40 dB dan Rp9.000.000 (Gagal)", "25 dB dan Rp8.000.000 (Layak)", "30 dB dan Rp9.000.000 (Layak)", "16,5 dB dan Rp9.000.000 (Layak)"],
+                options: ["Menghitung biaya -> menentukan α -> menghitung sisa suara -> hasil 40 dB dan Rp9.000.000 (Tidak layak)", "Menentukan target -> menghitung energi -> menghitung biaya, hasil 25 dB dan Rp8.000.000 (Layak)", "Menghitung sisa suara -> menentukan luas -> menghitung biaya, hasil 30 dB dan Rp9.000.000 (Layak)", "Menentukan luas -> menghitung frekuensi -> menghitung biaya, hasil 16,5 dB dan Rp10.000.000", "Menentukan suara awal dan target -> menentukan luas, α dan harga -> menghitung sisa suara -> menghitung biaya -> menentukan status, hasil 16,5 dB dan Rp9.000.000 (Layak)"],
                 correct: 4
             }
         ];
